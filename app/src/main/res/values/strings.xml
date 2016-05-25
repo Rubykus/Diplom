@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Hats</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+
+    <string name="add">Добавить</string>
+    <string name="update">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="categories">Категории</string>
+    <string name="goods">Товары</string>
+    <string name="check">Чеки</string>
+    <string name="sales">Продажи</string>
+    <string name="footer_menu">Системные</string>
+    <string name="about_us">О нас</string>
+    <string name="exit">Выход</string>
+
+</resources>
