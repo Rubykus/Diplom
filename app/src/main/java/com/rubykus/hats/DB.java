@@ -42,6 +42,11 @@ public class DB {
         cv.put(COLUMN_NAME, name);
         mDB.insert(DB_CAT, null, cv);
     }
+    public void updateCat(long id, String name) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        mDB.update(DB_CAT, cv, COLUMN_ID + " = " + id, null);
+    }
     public void delCat(long id) {
         mDB.delete(DB_CAT, COLUMN_ID + " = " + id, null);
     }

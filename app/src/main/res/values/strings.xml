@@ -18,5 +18,6 @@
     <string name="cancle">Отмена</string>
     <string name="cat_name">Название категори</string>
     <string name="new_cat">Новая категория</string>
+    <string name="edit_cat">Изменить категорию</string>
 
 </resources>

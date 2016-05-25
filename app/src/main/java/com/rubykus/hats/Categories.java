@@ -28,10 +28,13 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.HashMap;
+
 public class Categories extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CM_DELETE_ID = 1;
+    private static final int CM_UPDATE_ID = 2;
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
@@ -71,6 +74,7 @@ public class Categories extends AppCompatActivity
 
         // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
+
     }
 
     @Override
@@ -157,6 +161,7 @@ public class Categories extends AppCompatActivity
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, CM_UPDATE_ID, 0, R.string.update);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
@@ -170,6 +175,33 @@ public class Categories extends AppCompatActivity
             // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
+        } else {
+            Cursor m = scAdapter.getCursor();
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+            final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
+            final String newTextNameCat = m.getString(m.getColumnIndex(DB.COLUMN_NAME));
+            nameCat.setText(newTextNameCat);
+            final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
+                    .getMenuInfo();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.edit_cat)
+                    .setView(view)
+                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String textNameCat = nameCat.getText().toString();
+                            db.updateCat(acmi.id, textNameCat);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            AlertDialog dialog = builder.create();
+            dialog.show();
         }
         return super.onContextItemSelected(item);
     }
