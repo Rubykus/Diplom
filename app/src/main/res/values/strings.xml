@@ -15,5 +15,8 @@
     <string name="footer_menu">Системные</string>
     <string name="about_us">О нас</string>
     <string name="exit">Выход</string>
+    <string name="cancle">Отмена</string>
+    <string name="cat_name">Название категори</string>
+    <string name="new_cat">Новая категория</string>
 
 </resources>
