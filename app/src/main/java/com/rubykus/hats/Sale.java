@@ -99,14 +99,14 @@ public class Sale extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            /*View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+            /*View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
             final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.new_cat)
                     .setView(view)
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog_check, int which) {
                             String textNameCat = nameCat.getText().toString();
                             db.addCat(textNameCat);
                             getSupportLoaderManager().getLoader(0).forceLoad();
@@ -114,12 +114,12 @@ public class Sale extends AppCompatActivity
                     })
                     .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog_check, int which) {
 
                         }
                     });
-            AlertDialog dialog = builder.create();
-            dialog.show();*/
+            AlertDialog dialog_check = builder.create();
+            dialog_check.show();*/
         }
 
         return super.onOptionsItemSelected(item);
@@ -175,7 +175,7 @@ public class Sale extends AppCompatActivity
             return true;
         } else {
             /*Cursor m = scAdapter.getCursor();
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
             final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
             final String newTextNameCat = m.getString(m.getColumnIndex(DB.CAT_NAME));
             nameCat.setText(newTextNameCat);
@@ -186,7 +186,7 @@ public class Sale extends AppCompatActivity
                     .setView(view)
                     .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog_check, int which) {
                             String textNameCat = nameCat.getText().toString();
                             db.updateCat(acmi.id, textNameCat);
                             getSupportLoaderManager().getLoader(0).forceLoad();
@@ -194,12 +194,12 @@ public class Sale extends AppCompatActivity
                     })
                     .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(DialogInterface dialog_check, int which) {
 
                         }
                     });
-            AlertDialog dialog = builder.create();
-            dialog.show();*/
+            AlertDialog dialog_check = builder.create();
+            dialog_check.show();*/
         }
         return super.onContextItemSelected(item);
     }

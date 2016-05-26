@@ -18,6 +18,9 @@
     <string name="cancle">Отмена</string>
     <string name="cat_name">Название категори</string>
     <string name="new_cat">Новая категория</string>
+    <string name="new_check">Новый чек</string>
     <string name="edit_cat">Изменить категорию</string>
+    <string name="date">Дата</string>
+    <string name="cost">Стоимость</string>
 
 </resources>

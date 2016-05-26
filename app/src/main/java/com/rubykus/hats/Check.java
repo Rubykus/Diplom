@@ -1,7 +1,10 @@
 package com.rubykus.hats;
 
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -9,7 +12,9 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.app.AlertDialog;
 import android.view.ContextMenu;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,15 +25,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.Calendar;
 
 public class Check extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CM_DELETE_ID = 1;
+    private static final int CM_EDIT_ID = 2;
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
+    // for dialogs
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,7 +96,6 @@ public class Check extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -93,7 +105,41 @@ public class Check extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            return true;
+            View view = LayoutInflater.from(Check.this).inflate(R.layout.dialog_check, null);
+            final TextView dateCheck = (TextView)view.findViewById(R.id.dateAddCheck);
+            final EditText costCheck = (EditText)view.findViewById(R.id.costAddCheck);
+            final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+                    dateCheck.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+                }
+            };
+            dateCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new DatePickerDialog(Check.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+            });
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.new_check)
+                    .setView(view)
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String textDateCheck = dateCheck.getText().toString();
+                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
+                            db.addCheck(textDateCheck, textCostCheck);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            AlertDialog dialog_check = builder.create();
+            dialog_check.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -133,19 +179,60 @@ public class Check extends AppCompatActivity
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, CM_EDIT_ID, 0, R.string.update);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
+        final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
+                .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
-            // obtain from the context menu item list data
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
-                    .getMenuInfo();
-            // retrieve the record id and delete the corresponding entry in the database
             db.delCheck(acmi.id);
-            // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
+        } else {
+            Cursor cursor = scAdapter.getCursor();
+            View view = LayoutInflater.from(Check.this).inflate(R.layout.dialog_check, null);
+
+            final TextView dateCheck = (TextView)view.findViewById(R.id.dateAddCheck);
+            dateCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_DATE)));
+
+            final EditText costCheck = (EditText)view.findViewById(R.id.costAddCheck);
+            costCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_COST)));
+
+            final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+                    dateCheck.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+                }
+            };
+            dateCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    new DatePickerDialog(Check.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+                }
+            });
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.new_check)
+                    .setView(view)
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String textDateCheck = dateCheck.getText().toString();
+                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
+                            db.updateCheck(acmi.id,textDateCheck, textCostCheck);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+            AlertDialog dialog_check = builder.create();
+            dialog_check.show();
         }
         return super.onContextItemSelected(item);
     }

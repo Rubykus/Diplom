@@ -98,7 +98,7 @@ public class Categories extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+            View view = LayoutInflater.from(Categories.this).inflate(R.layout.dialog_cat, null);
             final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle(R.string.new_cat)
@@ -117,8 +117,8 @@ public class Categories extends AppCompatActivity
 
                         }
                     });
-            AlertDialog dialog = builder.create();
-            dialog.show();
+            AlertDialog dialog_cat = builder.create();
+            dialog_cat.show();
         }
 
         return super.onOptionsItemSelected(item);
@@ -174,7 +174,7 @@ public class Categories extends AppCompatActivity
             return true;
         } else {
             Cursor m = scAdapter.getCursor();
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
+            View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
             final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
             final String newTextNameCat = m.getString(m.getColumnIndex(DB.CAT_NAME));
             nameCat.setText(newTextNameCat);
