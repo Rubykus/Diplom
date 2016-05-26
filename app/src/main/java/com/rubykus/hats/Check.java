@@ -2,7 +2,6 @@ package com.rubykus.hats;
 
 
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,12 +30,15 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.Calendar;
+import java.util.Objects;
 
 public class Check extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CM_DELETE_ID = 1;
     private static final int CM_EDIT_ID = 2;
+    private static final int DIALOG_ADD = 1;
+    private static final int DIALOG_EDIT = 2;
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
@@ -89,38 +91,25 @@ public class Check extends AppCompatActivity
             super.onBackPressed();
         }
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.add) {
-            View view = LayoutInflater.from(Check.this).inflate(R.layout.dialog_check, null);
-            final TextView dateCheck = (TextView)view.findViewById(R.id.dateAddCheck);
-            final EditText costCheck = (EditText)view.findViewById(R.id.costAddCheck);
-            final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-                    dateCheck.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
-                }
-            };
-            dateCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new DatePickerDialog(Check.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-                }
-            });
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    // initialize dialog
+    public void initDialog(Cursor cursor, final long id){
+        View view = LayoutInflater.from(Check.this).inflate(R.layout.dialog_check, null);
+        final TextView dateCheck = (TextView)view.findViewById(R.id.dateAddCheck);
+        final EditText costCheck = (EditText)view.findViewById(R.id.costAddCheck);
+        final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+                dateCheck.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+            }
+        };
+        dateCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(Check.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (cursor == null && id == -1) {
             builder.setTitle(R.string.new_check)
                     .setView(view)
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
@@ -138,8 +127,46 @@ public class Check extends AppCompatActivity
 
                         }
                     });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();
+        } else {
+            dateCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_DATE)));
+            costCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_COST)));
+            builder.setTitle(R.string.new_check)
+                    .setView(view)
+                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String textDateCheck = dateCheck.getText().toString();
+                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
+                            db.updateCheck(id,textDateCheck, textCostCheck);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+        }
+        AlertDialog dialog_check = builder.create();
+        dialog_check.show();
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.add) {
+            initDialog(null, -1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -192,47 +219,7 @@ public class Check extends AppCompatActivity
             return true;
         } else {
             Cursor cursor = scAdapter.getCursor();
-            View view = LayoutInflater.from(Check.this).inflate(R.layout.dialog_check, null);
-
-            final TextView dateCheck = (TextView)view.findViewById(R.id.dateAddCheck);
-            dateCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_DATE)));
-
-            final EditText costCheck = (EditText)view.findViewById(R.id.costAddCheck);
-            costCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_COST)));
-
-            final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
-                @Override
-                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
-                    dateCheck.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
-                }
-            };
-            dateCheck.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    new DatePickerDialog(Check.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
-                }
-            });
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.new_check)
-                    .setView(view)
-                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String textDateCheck = dateCheck.getText().toString();
-                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
-                            db.updateCheck(acmi.id,textDateCheck, textCostCheck);
-                            getSupportLoaderManager().getLoader(0).forceLoad();
-                        }
-                    })
-                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();
+            initDialog(cursor, acmi.id);
         }
         return super.onContextItemSelected(item);
     }
