@@ -24,6 +24,16 @@
             android:name=".Check"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".Sale"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".Good"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
     </application>
 
 </manifest>

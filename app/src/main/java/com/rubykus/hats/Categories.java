@@ -1,12 +1,10 @@
 package com.rubykus.hats;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
@@ -26,9 +24,6 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
-
-import java.util.HashMap;
 
 public class Categories extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -61,7 +56,7 @@ public class Categories extends AppCompatActivity
         db.open();
 
         // forming matching columns
-        String[] from = new String[] { DB.COLUMN_NAME };
+        String[] from = new String[] { DB.CAT_NAME};
         int[] to = new int[] { R.id.tvNameCat };
 
         // create adapter and customizable list
@@ -136,17 +131,19 @@ public class Categories extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.categories) {
-            Intent intent = new Intent(this, Categories.class);
+            onBackPressed();
+        } else if (id == R.id.goods) {
+            Intent intent = new Intent(this, Good.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.goods) {
-
         } else if (id == R.id.checks) {
             Intent intent = new Intent(this, Check.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {
-
+            Intent intent = new Intent(this, Sale.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.about_us) {
 
         } else if (id == R.id.exit) {
@@ -179,7 +176,7 @@ public class Categories extends AppCompatActivity
             Cursor m = scAdapter.getCursor();
             View view = LayoutInflater.from(this).inflate(R.layout.dialog, null);
             final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
-            final String newTextNameCat = m.getString(m.getColumnIndex(DB.COLUMN_NAME));
+            final String newTextNameCat = m.getString(m.getColumnIndex(DB.CAT_NAME));
             nameCat.setText(newTextNameCat);
             final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                     .getMenuInfo();

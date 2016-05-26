@@ -52,7 +52,7 @@ public class Check extends AppCompatActivity
         db.open();
 
         // forming matching columns
-        String[] from = new String[] { DB.COLUMN_ID, DB.COLUMN_DATA_CHECK, DB.COLUMN_TOTAL_COST };
+        String[] from = new String[] { DB.COLUMN_ID, DB.CHECK_DATE, DB.CHECK_COST};
         int[] to = new int[] { R.id.text1, R.id.text2, R.id.text3 };
 
         // create adapter and customizable list
@@ -110,13 +110,15 @@ public class Check extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.goods) {
-
-        } else if (id == R.id.checks) {
-            Intent intent = new Intent(this, Check.class);
+            Intent intent = new Intent(this, Good.class);
             startActivity(intent);
             finish();
+        } else if (id == R.id.checks) {
+            onBackPressed();
         } else if (id == R.id.sales) {
-
+            Intent intent = new Intent(this, Sale.class);
+            startActivity(intent);
+            finish();
         } else if (id == R.id.about_us) {
 
         } else if (id == R.id.exit) {
