@@ -10,7 +10,7 @@
     <string name="delete">Удалить</string>
     <string name="categories">Категории</string>
     <string name="goods">Товары</string>
-    <string name="check">Чеки</string>
+    <string name="checks">Чеки</string>
     <string name="sales">Продажи</string>
     <string name="footer_menu">Системные</string>
     <string name="about_us">О нас</string>
@@ -19,8 +19,10 @@
     <string name="cat_name">Название категори</string>
     <string name="new_cat">Новая категория</string>
     <string name="new_check">Новый чек</string>
-    <string name="edit_cat">Изменить категорию</string>
     <string name="date">Дата</string>
     <string name="cost">Стоимость</string>
+    <string name="good_name">Название товара</string>
+    <string name="check">Чек</string>
+    <string name="new_sale">Новая продажа</string>
 
 </resources>

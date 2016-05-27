@@ -1,6 +1,7 @@
 package com.rubykus.hats;
 
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,14 +18,21 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Calendar;
 
 public class Sale extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -34,6 +42,8 @@ public class Sale extends AppCompatActivity
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
+    // for dialogs
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,7 +99,97 @@ public class Sale extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    // initialize dialog good list
+    public void getGoodId(final TextView tv){
+        Cursor cur = db.getAllGood();
+        int countRow = cur.getCount();
+        final String[] good_name = new String[countRow];
+        final int[] good_id = new int[countRow];
+        for (int i = 0; i < countRow; i++){
+            cur.moveToNext();
+            int index = cur.getInt(cur.getColumnIndex(DB.COLUMN_ID));
+            String val = cur.getString(cur.getColumnIndex(DB.GOOD_NAME));
+            good_name[i] = val;
+            good_id[i] = index;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Выберите категорию")
+                .setItems(good_name, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                       tv.setText(good_name[which]);
+                    }
+                });
+        AlertDialog dialog_choose = builder.create();
+        dialog_choose.show();
+    }
+    // initialize dialog
+    public void initDialog(Cursor cursor, final long id){
+        View view = LayoutInflater.from(Sale.this).inflate(R.layout.dialog_sale, null);
+        final TextView saleIdGood = (TextView)view.findViewById(R.id.addIdGood);
+        saleIdGood.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getGoodId(saleIdGood);
+            }
+        });
+        final TextView dateSale = (TextView)view.findViewById(R.id.addDate);
+        final EditText saleIdCheck = (EditText)view.findViewById(R.id.addIdCheck);
+        final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
+                dateSale.setText(dayOfMonth+"/"+monthOfYear+"/"+year);
+            }
+        };
+        dateSale.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(Sale.this, listener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (cursor == null && id == -1) {
+            builder.setTitle(R.string.new_sale)
+                    .setView(view)
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int textIdGood = Integer.parseInt(saleIdGood.getText().toString());
+                            String textDate = dateSale.getText().toString();
+                            int textIdCheck = Integer.parseInt(saleIdCheck.getText().toString());
+                            db.addSale(textIdGood, textDate, textIdCheck);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+        } else {
+            saleIdGood.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_ID_GOODS)));
+            dateSale.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_DATE)));
+            saleIdCheck.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_ID_CHECK)));
+            builder.setTitle(R.string.update)
+                    .setView(view)
+                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            int textIdGood = Integer.parseInt(saleIdGood.getText().toString());
+                            String textDate = dateSale.getText().toString();
+                            int textIdCheck = Integer.parseInt(saleIdCheck.getText().toString());
+                            db.updateSale(id, textIdGood, textDate, textIdCheck);
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
+                        }
+                    });
+        }
+        AlertDialog dialog_sale = builder.create();
+        dialog_sale.show();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -99,27 +199,7 @@ public class Sale extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            /*View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
-            final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.new_cat)
-                    .setView(view)
-                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-                            String textNameCat = nameCat.getText().toString();
-                            db.addCat(textNameCat);
-                            getSupportLoaderManager().getLoader(0).forceLoad();
-                        }
-                    })
-                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-
-                        }
-                    });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();*/
+            initDialog(null, -1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -164,42 +244,19 @@ public class Sale extends AppCompatActivity
     }
 
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
+                .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
             // obtain from the context menu item list data
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
-                    .getMenuInfo();
+
             // retrieve the record id and delete the corresponding entry in the database
             db.delSale(acmi.id);
             // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         } else {
-            /*Cursor m = scAdapter.getCursor();
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
-            final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
-            final String newTextNameCat = m.getString(m.getColumnIndex(DB.CAT_NAME));
-            nameCat.setText(newTextNameCat);
-            final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
-                    .getMenuInfo();
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.edit_cat)
-                    .setView(view)
-                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-                            String textNameCat = nameCat.getText().toString();
-                            db.updateCat(acmi.id, textNameCat);
-                            getSupportLoaderManager().getLoader(0).forceLoad();
-                        }
-                    })
-                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-
-                        }
-                    });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();*/
+            Cursor cursor = scAdapter.getCursor();
+            initDialog(cursor, acmi.id);
         }
         return super.onContextItemSelected(item);
     }

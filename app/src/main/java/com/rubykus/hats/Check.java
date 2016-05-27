@@ -130,7 +130,7 @@ public class Check extends AppCompatActivity
         } else {
             dateCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_DATE)));
             costCheck.setText(cursor.getString(cursor.getColumnIndex(DB.CHECK_COST)));
-            builder.setTitle(R.string.new_check)
+            builder.setTitle(R.string.update)
                     .setView(view)
                     .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                         @Override

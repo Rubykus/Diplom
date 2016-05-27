@@ -115,7 +115,7 @@ public class Categories extends AppCompatActivity
                     });
         } else {
             nameCat.setText(cursor.getString(cursor.getColumnIndex(DB.CAT_NAME)));
-            builder.setTitle(R.string.edit_cat)
+            builder.setTitle(R.string.update)
                     .setView(view)
                     .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                         @Override
