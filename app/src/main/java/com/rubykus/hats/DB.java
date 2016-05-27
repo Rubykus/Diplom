@@ -132,6 +132,10 @@ public class DB {
     public Cursor getAllGood() {
         return mDB.query(DB_GOOD, null, null, null, null, null, null);
     }
+    /*public int searchNameGood(){
+        Cursor cur =  mDB.query(DB_GOOD, null, "_id=2", null, null, null, null);
+        return cur.getColumnIndex(GOOD_NAME);
+    }*/
     public void addGood(String name, int id_cat, String color, String sex,
                         String firm, int quantity, double price, String image) {
         ContentValues cv = new ContentValues();

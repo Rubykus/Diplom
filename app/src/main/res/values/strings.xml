@@ -24,5 +24,6 @@
     <string name="good_name">Название товара</string>
     <string name="check">Чек</string>
     <string name="new_sale">Новая продажа</string>
+    <string name="error_validations">Неправильно введены данные</string>
 
 </resources>

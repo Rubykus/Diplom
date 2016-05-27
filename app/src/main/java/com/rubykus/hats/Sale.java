@@ -18,7 +18,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -31,19 +30,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
 public class Sale extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
     private static final int CM_DELETE_ID = 1;
     private static final int CM_UPDATE_ID = 2;
+    private static final int DIALOG_LIST_GOOD = 1;
+    private static final int DIALOG_LIST_CHECK = 2;
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
     // for dialogs
     Calendar calendar = Calendar.getInstance();
+    int index_good;
+    int index_check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +83,6 @@ public class Sale extends AppCompatActivity
 
         // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
-
     }
 
     @Override
@@ -100,27 +102,64 @@ public class Sale extends AppCompatActivity
         return true;
     }
     // initialize dialog good list
-    public void getGoodId(final TextView tv){
+    public void showDialogInner(int id, final TextView tv){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (id == DIALOG_LIST_GOOD) {
+            Cursor cur = db.getAllGood();
+            int countRow = cur.getCount();
+            final String[] good_name = new String[countRow];
+            final int[] good_id = new int[countRow];
+            for (int i = 0; i < countRow; i++) {
+                cur.moveToNext();
+                int index = cur.getInt(cur.getColumnIndex(DB.COLUMN_ID));
+                String val = cur.getString(cur.getColumnIndex(DB.GOOD_NAME));
+                good_name[i] = val;
+                good_id[i] = index;
+            }
+            builder.setTitle("Выберите категорию")
+                    .setItems(good_name, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            tv.setText(good_name[which]);
+                            index_good = good_id[which];
+                        }
+                    });
+        } else if (id == DIALOG_LIST_CHECK){
+            Cursor cur = db.getAllCheck();
+            int countRow = cur.getCount();
+            final String[] check_data = new String[countRow];
+            for (int i = 0; i < countRow; i++) {
+                cur.moveToNext();
+                String index = cur.getString(cur.getColumnIndex(DB.COLUMN_ID));
+                String date = cur.getString(cur.getColumnIndex(DB.CHECK_DATE));
+                String cost = cur.getString(cur.getColumnIndex(DB.CHECK_COST));
+                check_data[i] = index+" "+date+" "+cost;
+            }
+            Toast.makeText(this, check_data[1],Toast.LENGTH_LONG).show();
+            builder.setTitle("Выберите чек")
+                    .setItems(check_data, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            tv.setText(check_data[which]);
+                            String[] arr_check = check_data[which].split(" ");
+                            index_check = Integer.parseInt(arr_check[0]);
+                        }
+                    });
+        }
+
+        AlertDialog dialog_choose = builder.create();
+        dialog_choose.show();
+    }
+    // get name good
+    public String getNameGood(int idGood){
         Cursor cur = db.getAllGood();
         int countRow = cur.getCount();
-        final String[] good_name = new String[countRow];
-        final int[] good_id = new int[countRow];
+        HashMap<Integer,String> dataGood = new HashMap<>();
         for (int i = 0; i < countRow; i++){
             cur.moveToNext();
             int index = cur.getInt(cur.getColumnIndex(DB.COLUMN_ID));
             String val = cur.getString(cur.getColumnIndex(DB.GOOD_NAME));
-            good_name[i] = val;
-            good_id[i] = index;
+            dataGood.put(index, val);
         }
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Выберите категорию")
-                .setItems(good_name, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                       tv.setText(good_name[which]);
-                    }
-                });
-        AlertDialog dialog_choose = builder.create();
-        dialog_choose.show();
+        return dataGood.get(idGood);
     }
     // initialize dialog
     public void initDialog(Cursor cursor, final long id){
@@ -129,11 +168,17 @@ public class Sale extends AppCompatActivity
         saleIdGood.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getGoodId(saleIdGood);
+                showDialogInner(DIALOG_LIST_GOOD, saleIdGood);
             }
         });
         final TextView dateSale = (TextView)view.findViewById(R.id.addDate);
-        final EditText saleIdCheck = (EditText)view.findViewById(R.id.addIdCheck);
+        final TextView saleIdCheck = (TextView)view.findViewById(R.id.addIdCheck);
+        saleIdCheck.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogInner(DIALOG_LIST_CHECK, saleIdCheck);
+            }
+        });
         final DatePickerDialog.OnDateSetListener listener =  new DatePickerDialog.OnDateSetListener(){
             @Override
             public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth){
@@ -153,10 +198,13 @@ public class Sale extends AppCompatActivity
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int textIdGood = Integer.parseInt(saleIdGood.getText().toString());
                             String textDate = dateSale.getText().toString();
-                            int textIdCheck = Integer.parseInt(saleIdCheck.getText().toString());
-                            db.addSale(textIdGood, textDate, textIdCheck);
+                            try {
+                                db.addSale(index_good, textDate, index_check);
+                            } catch (Exception e) {
+                                Toast.makeText(Sale.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
+                            index_good = 0;
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })
@@ -165,18 +213,38 @@ public class Sale extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {}
                     });
         } else {
-            saleIdGood.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_ID_GOODS)));
+            final int idGood = cursor.getInt(cursor.getColumnIndex(DB.SALE_ID_GOODS));
+            saleIdGood.setText(getNameGood(idGood));
+            saleIdGood.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDialogInner(DIALOG_LIST_GOOD, saleIdGood);
+                }
+            });
             dateSale.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_DATE)));
             saleIdCheck.setText(cursor.getString(cursor.getColumnIndex(DB.SALE_ID_CHECK)));
+            saleIdCheck.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDialogInner(DIALOG_LIST_CHECK, saleIdCheck);
+                }
+            });
             builder.setTitle(R.string.update)
                     .setView(view)
                     .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            int textIdGood = Integer.parseInt(saleIdGood.getText().toString());
                             String textDate = dateSale.getText().toString();
-                            int textIdCheck = Integer.parseInt(saleIdCheck.getText().toString());
-                            db.updateSale(id, textIdGood, textDate, textIdCheck);
+                            try {
+                                if (index_good == 0){
+                                    db.updateSale(id, idGood, textDate, index_check);
+                                } else {
+                                    db.updateSale(id, index_good, textDate, index_check);
+                                }
+                            } catch (Exception e){
+                                Toast.makeText(Sale.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
+                            index_good = 0;
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })
