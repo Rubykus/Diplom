@@ -1,5 +1,6 @@
 package com.rubykus.hats;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -22,8 +23,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.Calendar;
+import java.util.HashMap;
 
 public class Good extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -33,6 +40,8 @@ public class Good extends AppCompatActivity
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
+    // for dialog cat
+    int index_cat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,7 +99,148 @@ public class Good extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
+    // initialize dialog good list
+    public void showDialogInner(final TextView tv){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        Cursor cur = db.getAllCat();
+        int countRow = cur.getCount();
+        final String[] cat_name = new String[countRow];
+        final int[] cat_id = new int[countRow];
+        for (int i = 0; i < countRow; i++) {
+            cur.moveToNext();
+            int index = cur.getInt(cur.getColumnIndex(DB.COLUMN_ID));
+            String val = cur.getString(cur.getColumnIndex(DB.CAT_NAME));
+            cat_name[i] = val;
+            cat_id[i] = index;
+        }
+        builder.setTitle("Выберите категорию")
+                .setItems(cat_name, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        tv.setText(cat_name[which]);
+                        index_cat = cat_id[which];
+                    }
+                });
+        AlertDialog dialog_choose = builder.create();
+        dialog_choose.show();
+    }
+    // get name good
+    public String getNameCat(int idCat){
+        Cursor cur = db.getAllCat();
+        int countRow = cur.getCount();
+        HashMap<Integer,String> dataCat = new HashMap<>();
+        for (int i = 0; i < countRow; i++){
+            cur.moveToNext();
+            int index = cur.getInt(cur.getColumnIndex(DB.COLUMN_ID));
+            String val = cur.getString(cur.getColumnIndex(DB.CAT_NAME));
+            dataCat.put(index, val);
+        }
+        return dataCat.get(idCat);
+    }
+    // initialize dialog
+    public void initDialog(Cursor cursor, final long id){
+        View view = LayoutInflater.from(Good.this).inflate(R.layout.dialog_good, null);
+        final EditText goodName = (EditText)view.findViewById(R.id.goodAddName);
+        final TextView goodIdCat = (TextView)view.findViewById(R.id.goodAddCat);
+        goodIdCat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showDialogInner(goodIdCat);
+            }
+        });
+        final EditText goodColor = (EditText)view.findViewById(R.id.goodAddColor);
+        final EditText goodSex = (EditText)view.findViewById(R.id.goodAddSex);
+        final EditText goodFirm = (EditText)view.findViewById(R.id.goodAddFirm);
+        final EditText goodQuantity = (EditText)view.findViewById(R.id.goodAddQuantity);
+        final EditText goodPrice = (EditText)view.findViewById(R.id.goodAddPrice);
+        final EditText goodImg = (EditText)view.findViewById(R.id.goodAddImg);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        if (cursor == null && id == -1) {
+            builder.setTitle(R.string.new_sale)
+                    .setView(view)
+                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                String textName = goodName.getText().toString();
+                                int idCat = index_cat;
+                                String textColor = goodColor.getText().toString();
+                                String textSex = goodSex.getText().toString();
+                                String textFirm = goodFirm.getText().toString();
+                                int textQuantity = Integer.parseInt(goodQuantity.getText().toString());
+                                double textPrice = Double.parseDouble(goodPrice.getText().toString());
+                                String textImg = goodImg.getText().toString();
+                                if ( index_cat == 0 || textName.isEmpty() || textColor.isEmpty() || textSex.isEmpty() ||
+                                        textFirm.isEmpty() || textImg.isEmpty()) {
+                                    throw new Exception();
+                                }
+                                db.addGood(textName, idCat, textColor, textSex, textFirm, textQuantity, textPrice, textImg);
+                            } catch (Exception e) {
+                                Toast.makeText(Good.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
+                            index_cat = 0;
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {}
+                    });
+        } else {
+            goodName.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_NAME)));
+            final int idCat = cursor.getInt(cursor.getColumnIndex(DB.GOOD_ID_CAT));
+            goodIdCat.setText(getNameCat(idCat));
+            goodIdCat.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showDialogInner(goodIdCat);
+                }
+            });
+            goodColor.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_COLOR)));
+            goodSex.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_SEX)));
+            goodFirm.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_FIRM)));
+            goodQuantity.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_QUANTITY)));
+            goodPrice.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_PRICE)));
+            goodImg.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_IMAGE)));
+            builder.setTitle(R.string.update)
+                    .setView(view)
+                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            try {
+                                String textName = goodName.getText().toString();
+                                String textColor = goodColor.getText().toString();
+                                String textSex = goodSex.getText().toString();
+                                String textFirm = goodFirm.getText().toString();
+                                int textQuantity = Integer.parseInt(goodQuantity.getText().toString());
+                                double textPrice = Double.parseDouble(goodPrice.getText().toString());
+                                String textImg = goodImg.getText().toString();
+                                if ( textName.isEmpty() || textColor.isEmpty() || textSex.isEmpty() ||
+                                        textFirm.isEmpty() || textImg.isEmpty()) {
+                                    throw new Exception();
+                                }
+                                if (index_cat == 0) {
+                                    db.updateGood(id, textName, idCat, textColor, textSex, textFirm, textQuantity, textPrice, textImg);
+                                } else {
+                                    db.updateGood(id, textName, index_cat, textColor, textSex, textFirm, textQuantity, textPrice, textImg);
 
+                                }
+                            } catch (Exception e) {
+                                Toast.makeText(Good.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
+                            index_cat = 0;
+                            getSupportLoaderManager().getLoader(0).forceLoad();
+                        }
+                    })
+                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+        }
+        AlertDialog dialog_sale = builder.create();
+        dialog_sale.show();
+    }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -100,27 +250,7 @@ public class Good extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
-            /*View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
-            final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.new_cat)
-                    .setView(view)
-                    .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-                            String textNameCat = nameCat.getText().toString();
-                            db.addCat(textNameCat);
-                            getSupportLoaderManager().getLoader(0).forceLoad();
-                        }
-                    })
-                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-
-                        }
-                    });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();*/
+            initDialog(null, -1);
         }
 
         return super.onOptionsItemSelected(item);
@@ -165,42 +295,18 @@ public class Good extends AppCompatActivity
     }
 
     public boolean onContextItemSelected(MenuItem item) {
+        AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
+                .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
             // obtain from the context menu item list data
-            AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
-                    .getMenuInfo();
             // retrieve the record id and delete the corresponding entry in the database
             db.delGood(acmi.id);
             // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         } else {
-            /*Cursor m = scAdapter.getCursor();
-            View view = LayoutInflater.from(this).inflate(R.layout.dialog_check, null);
-            final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
-            final String newTextNameCat = m.getString(m.getColumnIndex(DB.CAT_NAME));
-            nameCat.setText(newTextNameCat);
-            final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
-                    .getMenuInfo();
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.edit_cat)
-                    .setView(view)
-                    .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-                            String textNameCat = nameCat.getText().toString();
-                            db.updateCat(acmi.id, textNameCat);
-                            getSupportLoaderManager().getLoader(0).forceLoad();
-                        }
-                    })
-                    .setNegativeButton(R.string.cancle, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog_check, int which) {
-
-                        }
-                    });
-            AlertDialog dialog_check = builder.create();
-            dialog_check.show();*/
+            Cursor cursor = scAdapter.getCursor();
+            initDialog(cursor, acmi.id);
         }
         return super.onContextItemSelected(item);
     }
