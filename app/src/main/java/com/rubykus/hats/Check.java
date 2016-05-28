@@ -28,6 +28,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 import java.util.Objects;
@@ -115,9 +116,16 @@ public class Check extends AppCompatActivity
                     .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String textDateCheck = dateCheck.getText().toString();
-                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
-                            db.addCheck(textDateCheck, textCostCheck);
+                            try {
+                                String textDateCheck = dateCheck.getText().toString();
+                                double numCostCheck = Double.parseDouble(costCheck.getText().toString());
+                                if (textDateCheck.equals(getText(R.string.date))) {
+                                    throw new Exception();
+                                }
+                                db.addCheck(textDateCheck, numCostCheck);
+                            } catch(Exception e) {
+                                Toast.makeText(Check.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })
@@ -135,9 +143,13 @@ public class Check extends AppCompatActivity
                     .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String textDateCheck = dateCheck.getText().toString();
-                            double textCostCheck = Double.parseDouble(costCheck.getText().toString());
-                            db.updateCheck(id,textDateCheck, textCostCheck);
+                            try {
+                                String textDateCheck = dateCheck.getText().toString();
+                                double textCostCheck = Double.parseDouble(costCheck.getText().toString());
+                                db.updateCheck(id,textDateCheck, textCostCheck);
+                            } catch(Exception e) {
+                                Toast.makeText(Check.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })

@@ -27,6 +27,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Calendar;
 
@@ -105,7 +106,14 @@ public class Categories extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String textNameCat = nameCat.getText().toString();
-                            db.addCat(textNameCat);
+                            try {
+                                if (textNameCat.equals("")) {
+                                    throw new Exception();
+                                }
+                                db.addCat(textNameCat);
+                            } catch (Exception e){
+                                Toast.makeText(Categories.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })
@@ -121,7 +129,14 @@ public class Categories extends AppCompatActivity
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             String textNameCat = nameCat.getText().toString();
-                            db.updateCat(id, textNameCat);
+                            try {
+                                if (textNameCat.equals("")) {
+                                    throw new Exception();
+                                }
+                                db.updateCat(id, textNameCat);
+                            } catch (Exception e) {
+                                Toast.makeText(Categories.this, R.string.error_validations, Toast.LENGTH_LONG).show();
+                            }
                             getSupportLoaderManager().getLoader(0).forceLoad();
                         }
                     })

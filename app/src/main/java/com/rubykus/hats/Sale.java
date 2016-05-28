@@ -25,7 +25,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -134,7 +133,6 @@ public class Sale extends AppCompatActivity
                 String cost = cur.getString(cur.getColumnIndex(DB.CHECK_COST));
                 check_data[i] = index+" "+date+" "+cost;
             }
-            Toast.makeText(this, check_data[1],Toast.LENGTH_LONG).show();
             builder.setTitle("Выберите чек")
                     .setItems(check_data, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -200,6 +198,9 @@ public class Sale extends AppCompatActivity
                         public void onClick(DialogInterface dialog, int which) {
                             String textDate = dateSale.getText().toString();
                             try {
+                                if ((index_good == 0) || (textDate == getText(R.string.date)) || (index_check == 0)) {
+                                    throw new Exception();
+                                }
                                 db.addSale(index_good, textDate, index_check);
                             } catch (Exception e) {
                                 Toast.makeText(Sale.this, R.string.error_validations, Toast.LENGTH_LONG).show();
