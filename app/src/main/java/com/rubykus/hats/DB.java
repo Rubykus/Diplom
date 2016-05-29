@@ -233,7 +233,7 @@ public class DB {
             String[] good_firm = new String[] {"adidas", "nice", "puma"};
             int[] good_quantity = new int[] {12,54,78};
             double[] good_price = new double[] {450.12, 87.02, 96.89};
-            String[] good_image = new String[] {"img1", "img2", "img3"};
+            String[] good_image = new String[] {"file://sdcard/Download/hat.png", "img2", "img3"};
             ContentValues cg = new ContentValues();
             for (int i = 0; i < 3; i++) {
                 cg.put(GOOD_NAME, good_name[i]);
