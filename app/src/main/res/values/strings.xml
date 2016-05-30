@@ -34,6 +34,7 @@
     <string name="good_quantity">Количество</string>
     <string name="good_price">Цена</string>
     <string name="good_img">Изображение</string>
+    <string name="money">UAH</string>
     <!--for all-->
     <string name="date">Дата</string>
     <string name="cost">Стоимость</string>

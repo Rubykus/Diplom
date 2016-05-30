@@ -38,8 +38,8 @@ public class Good extends AppCompatActivity
     private static final int CM_DELETE_ID = 1;
     private static final int CM_UPDATE_ID = 2;
     ListView lv;
-    DB db;
-    SimpleCursorAdapter scAdapter;
+    static DB db;
+    MyCursorAdapter scAdapter;
     // for dialog cat
     int index_cat;
 
@@ -65,13 +65,11 @@ public class Good extends AppCompatActivity
         db.open();
 
         // forming matching columns
-        String[] from = new String[] { DB.COLUMN_ID, DB.GOOD_NAME, DB.GOOD_ID_CAT, DB.GOOD_COLOR,
-        DB.GOOD_SEX, DB.GOOD_FIRM, DB.GOOD_QUANTITY, DB.GOOD_PRICE, DB.GOOD_IMAGE };
-        int[] to = new int[] { R.id.text1, R.id.text2, R.id.text3, R.id.text4, R.id.text5,
-                R.id.text6, R.id.text7, R.id.text8, R.id.text9};
+        String[] from = new String[] {};
+        int[] to = new int[] { R.id.nameGood, R.id.descrGood, R.id.quantityGood, R.id.imageGood};
 
         // create adapter and customizable list
-        scAdapter = new SimpleCursorAdapter(this, R.layout.item_good, null, from, to, 0);
+        scAdapter = new MyCursorAdapter(this, R.layout.item_good, null, from, to, 0);
         lv = (ListView) findViewById(R.id.lv);
         lv.setAdapter(scAdapter);
 
@@ -124,7 +122,7 @@ public class Good extends AppCompatActivity
         dialog_choose.show();
     }
     // get name good
-    public String getNameCat(int idCat){
+    public static String getNameCat(int idCat){
         Cursor cur = db.getAllCat();
         int countRow = cur.getCount();
         HashMap<Integer,String> dataCat = new HashMap<>();
