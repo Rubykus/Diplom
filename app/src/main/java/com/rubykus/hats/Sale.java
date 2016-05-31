@@ -70,7 +70,7 @@ public class Sale extends AppCompatActivity
 
         // forming matching columns
         String[] from = new String[] { DB.COLUMN_ID, DB.SALE_ID_GOODS, DB.SALE_DATE, DB.SALE_ID_CHECK};
-        int[] to = new int[] { R.id.text1, R.id.text2, R.id.text3, R.id.text4 };
+        int[] to = new int[] { R.id.textIDSale, R.id.textIDGood, R.id.textDate, R.id.textIDCheck};
 
         // create adapter and customizable list
         scAdapter = new SimpleCursorAdapter(this, R.layout.item_sale, null, from, to, 0);

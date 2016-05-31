@@ -7,11 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
+import com.pkmmte.view.CircularImageView;
+
 public class StartActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.start_activity);
-        ImageButton cat = (ImageButton)findViewById(R.id.imageButton1);
+        CircularImageView cat = (CircularImageView)findViewById(R.id.imageCat);
+        /*cat.setImageResource(R.drawable.categories);*/
         cat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -20,7 +23,8 @@ public class StartActivity extends Activity {
                 finish();
             }
         });
-        ImageButton good = (ImageButton)findViewById(R.id.imageButton2);
+        CircularImageView good = (CircularImageView)findViewById(R.id.imageGood);
+        /*good.setImageResource(R.drawable.goods);*/
         good.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -29,7 +33,8 @@ public class StartActivity extends Activity {
                 finish();
             }
         });
-        ImageButton sale = (ImageButton)findViewById(R.id.imageButton3);
+        CircularImageView sale = (CircularImageView)findViewById(R.id.imageSale);
+        /*sale.setImageResource(R.drawable.sale);*/
         sale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -38,7 +43,8 @@ public class StartActivity extends Activity {
                 finish();
             }
         });
-        ImageButton check = (ImageButton)findViewById(R.id.imageButton4);
+        CircularImageView check = (CircularImageView)findViewById(R.id.imageCheck);
+        /*check.setImageResource(R.drawable.check);*/
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

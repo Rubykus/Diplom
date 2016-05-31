@@ -31,7 +31,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Calendar;
-import java.util.Objects;
 
 public class Check extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -69,7 +68,7 @@ public class Check extends AppCompatActivity
 
         // forming matching columns
         String[] from = new String[] { DB.COLUMN_ID, DB.CHECK_DATE, DB.CHECK_COST};
-        int[] to = new int[] { R.id.text1, R.id.text2, R.id.text3 };
+        int[] to = new int[] { R.id.textIDSale, R.id.textIDGood, R.id.textDate};
 
         // create adapter and customizable list
         scAdapter = new SimpleCursorAdapter(this, R.layout.item_check, null, from, to, 0);

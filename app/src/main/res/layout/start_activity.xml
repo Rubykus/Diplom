@@ -1,50 +1,92 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:id="@+id/imageView"
-        android:src="@mipmap/ic_launcher"/>
+        android:src="@drawable/logo"
+        android:layout_marginTop="20dp"/>
 
-    <ImageButton
+    <com.pkmmte.view.CircularImageView
+        android:src="@drawable/categories"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/imageView"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="70dp"
+        app:border="true"
+        app:shadow="true"
+        android:id="@+id/imageCat"/>
+    <com.pkmmte.view.CircularImageView
+        android:src="@drawable/goods"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/imageView"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="60dp"
+        android:layout_toRightOf="@id/imageCat"
+        app:border="true"
+        app:shadow="true"
+        android:id="@+id/imageGood"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton1"
-        android:layout_below="@+id/imageView"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="93dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:text="@string/categories"
+        android:id="@+id/textCat"
+        android:layout_below="@+id/imageCat"
+        android:layout_marginLeft="75dp"/>
 
-    <ImageButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton2"
-        android:layout_alignTop="@+id/imageButton1"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@mipmap/ic_launcher"/>
+        android:text="@string/goods"
+        android:id="@+id/textGood"
+        android:layout_below="@+id/imageGood"
+        android:layout_marginLeft="225dp" />
 
-    <ImageButton
+    <com.pkmmte.view.CircularImageView
+        android:src="@drawable/sale"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/textCat"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="70dp"
+        app:border="true"
+        app:shadow="true"
+        android:id="@+id/imageSale"/>
+
+    <com.pkmmte.view.CircularImageView
+        android:src="@drawable/check"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_below="@id/textGood"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="60dp"
+        android:layout_toRightOf="@id/imageSale"
+        app:border="true"
+        app:shadow="true"
+        android:id="@+id/imageCheck"/>
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton3"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="64dp"
-        android:src="@mipmap/ic_launcher"/>
+        android:text="@string/sales"
+        android:id="@+id/textSale"
+        android:layout_below="@+id/imageSale"
+        android:layout_marginLeft="80dp"/>
 
-    <ImageButton
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton4"
-        android:layout_alignTop="@+id/imageButton3"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:src="@mipmap/ic_launcher"/>
+        android:text="@string/check"
+        android:id="@+id/textCheck"
+        android:layout_below="@+id/imageCheck"
+        android:layout_marginLeft="235dp" />
 
 </RelativeLayout>
