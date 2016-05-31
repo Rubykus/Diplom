@@ -188,9 +188,8 @@ public class Categories extends AppCompatActivity
         } else if (id == R.id.about_us) {
             Intent intent = new Intent(this, AboutUs.class);
             startActivity(intent);
-            finish();
         } else if (id == R.id.exit) {
-
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

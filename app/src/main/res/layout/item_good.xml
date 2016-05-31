@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:background="@drawable/shape_good">
 
-    <ImageView
-        android:layout_width="89dp"
+    <com.pkmmte.view.CircularImageView
+        android:layout_width="80dp"
         android:layout_height="match_parent"
-        android:background="@drawable/shape_good"
+        app:border="true"
+        app:shadow="true"
         android:id="@+id/imageGood"/>
 
     <RelativeLayout

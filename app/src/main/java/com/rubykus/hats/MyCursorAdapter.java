@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
+import com.pkmmte.view.CircularImageView;
+
 
 public class MyCursorAdapter extends SimpleCursorAdapter {
 
@@ -31,7 +33,7 @@ public class MyCursorAdapter extends SimpleCursorAdapter {
         int quantity = _cursor.getInt(_cursor.getColumnIndex(DB.GOOD_QUANTITY));
         double price = _cursor.getDouble(_cursor.getColumnIndex(DB.GOOD_PRICE));
         String img = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_IMAGE));
-        ImageView imgGood = (ImageView)view.findViewById(R.id.imageGood);
+        CircularImageView imgGood = (CircularImageView)view.findViewById(R.id.imageGood);
         Uri path = Uri.parse(Environment.getExternalStorageDirectory().toString()+"/"+img);
         imgGood.setImageURI(path);
         TextView goodName = (TextView)view.findViewById(R.id.nameGood);

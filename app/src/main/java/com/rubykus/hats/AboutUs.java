@@ -13,14 +13,8 @@ public class AboutUs extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.about_us);
-        TextView t1 = (TextView)findViewById(R.id.text1);
-        TextView t2 = (TextView)findViewById(R.id.text2);
-        ImageView iv = (ImageView)findViewById(R.id.iv);
-        String path = Environment.getExternalStorageDirectory().getPath()+"/Download/hat.png";
-        String path2 = "/storage/emulated/0/Download/hat.png";
-        t1.setText(path);
-        t2.setText(path2);
-        iv.setImageURI(Uri.parse(path2));
-        Toast.makeText(this, String.valueOf(path.equals(path2)), Toast.LENGTH_LONG).show();
+        TextView about = (TextView)findViewById(R.id.about);
+        String text = "Проэкт разработан в рамках дипломной работы, студентам курса РПЗ 12 1/9 Ераком Егором Валерьевичем.";
+        about.setText(text);
     }
 }

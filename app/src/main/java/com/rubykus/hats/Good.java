@@ -79,8 +79,28 @@ public class Good extends AppCompatActivity
         // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
 
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Cursor cursor = scAdapter.getCursor();
+                initGood(cursor);
+            }
+        });
     }
-
+    // initialize single good
+    public void initGood(Cursor cursor){
+        Intent intent = new Intent(this, SingleGood.class);
+        intent.putExtra("id_good", cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID)));
+        intent.putExtra("name_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_NAME)));
+        intent.putExtra("cat_good", cursor.getInt(cursor.getColumnIndex(DB.GOOD_ID_CAT)));
+        intent.putExtra("color_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_COLOR)));
+        intent.putExtra("sex_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_SEX)));
+        intent.putExtra("firm_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_FIRM)));
+        intent.putExtra("quantity_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_QUANTITY)));
+        intent.putExtra("price_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_PRICE)));
+        intent.putExtra("img_good", cursor.getString(cursor.getColumnIndex(DB.GOOD_IMAGE)));
+        startActivity(intent);
+    }
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -275,9 +295,10 @@ public class Good extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.about_us) {
-
+            Intent intent = new Intent(this, AboutUs.class);
+            startActivity(intent);
         } else if (id == R.id.exit) {
-
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

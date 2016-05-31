@@ -26,6 +26,7 @@
     <string name="new_sale">Новая продажа</string>
     <string name="good_name_for_sale">Название товара</string>
     <!--goods-->
+    <string name="id">Код товара</string>
     <string name="good_name">Название</string>
     <string name="cat_name_for_good">Категория</string>
     <string name="good_color">Цвет</string>
