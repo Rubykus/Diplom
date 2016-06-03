@@ -41,5 +41,6 @@
     <string name="cost">Стоимость</string>
     <string name="cancle">Отмена</string>
     <string name="error_validations">Неправильно введены данные</string>
+    <string name="add_to_card">В корзину</string>
 
 </resources>
