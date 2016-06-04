@@ -1,6 +1,5 @@
 package com.rubykus.hats;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,13 +22,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.Calendar;
 
 public class Categories extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -178,7 +173,7 @@ public class Categories extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.checks) {
-            Intent intent = new Intent(this, Check.class);
+            Intent intent = new Intent(this, Card.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {

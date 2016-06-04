@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
 
 import com.pkmmte.view.CircularImageView;
 
@@ -48,7 +47,7 @@ public class StartActivity extends Activity {
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, Check.class);
+                Intent intent = new Intent(StartActivity.this, Card.class);
                 startActivity(intent);
                 finish();
             }

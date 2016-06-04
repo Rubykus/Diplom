@@ -21,7 +21,7 @@
     <string name="new_cat">Новая категория</string>
     <!--check-->
     <string name="new_check">Новый чек</string>
-    <string name="check">Чек</string>
+    <string name="card">Корзина</string>
     <!--sale-->
     <string name="new_sale">Новая продажа</string>
     <string name="good_name_for_sale">Название товара</string>

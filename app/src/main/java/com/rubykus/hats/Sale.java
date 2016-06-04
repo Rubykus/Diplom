@@ -289,7 +289,7 @@ public class Sale extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.checks) {
-            Intent intent = new Intent(this, Check.class);
+            Intent intent = new Intent(this, Card.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {
