@@ -10,9 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-
-import com.pkmmte.view.CircularImageView;
-
+import static com.rubykus.hats.StartActivity.*;
 
 public class MyCursorAdapter extends SimpleCursorAdapter {
 
@@ -26,32 +24,28 @@ public class MyCursorAdapter extends SimpleCursorAdapter {
     @Override
     public void bindView(View view, Context _context, Cursor _cursor){
         String name = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_NAME));
-        int id_cat = _cursor.getInt(_cursor.getColumnIndex(DB.GOOD_ID_CAT));
-        String color = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_COLOR));
-        String sex = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_SEX));
-        String firm = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_FIRM));
         int quantity = _cursor.getInt(_cursor.getColumnIndex(DB.GOOD_QUANTITY));
         double price = _cursor.getDouble(_cursor.getColumnIndex(DB.GOOD_PRICE));
         String img = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_IMAGE));
-        CircularImageView imgGood = (CircularImageView)view.findViewById(R.id.imageGood);
+        ImageView imgGood = (ImageView) view.findViewById(R.id.imageGood);
         Uri path = Uri.parse(Environment.getExternalStorageDirectory().toString()+"/"+img);
         imgGood.setImageURI(path);
         TextView goodName = (TextView)view.findViewById(R.id.nameGood);
         goodName.setText(name);
-        TextView desGood = (TextView)view.findViewById(R.id.descrGood);
-        String description = "Описание: "+name+", "+Good.getNameCat(id_cat)+", цвет "+color
-                +", пол "+sex+", фирма "+firm;
-        desGood.setText(description);
         TextView quantityV = (TextView)view.findViewById(R.id.quantityGood);
         String texQuantity = "Осталось: "+quantity;
         quantityV.setText(texQuantity);
         TextView priceV = (TextView)view.findViewById(R.id.goodPrice);
-        priceV.setText(String.valueOf(price));
+        priceV.setText(String.valueOf(price)+" UAH");
     }
     @Override
     public View newView(Context _context, Cursor _cursor, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) _context.getSystemService(_context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(layout, parent, false);
+        ViewGroup.LayoutParams params = view.getLayoutParams();
+        params.width = (int) (screenWidth / 2.1);
+        params.height = (int) (screenHeight / 2.1);
+        view.setLayoutParams(params);
         return view;
     }
 }

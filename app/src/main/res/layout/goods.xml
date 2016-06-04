@@ -30,44 +30,22 @@
 
         </android.support.design.widget.AppBarLayout>
 
-        <LinearLayout
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:orientation="vertical">
-            <ListView
-                android:id="@+id/lv"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            tools:context=".Categories"
+            tools:showIn="@layout/app_bar_main">
+
+            <GridView
+                android:id="@+id/gridGoods"
                 android:layout_width="match_parent"
-                android:layout_weight="5"
-                android:divider="@android:color/transparent"
-                android:dividerHeight="10.0sp"
-                android:layout_marginTop="55dp"
-                android:layout_height="match_parent">
-            </ListView>
-            <RelativeLayout
-                android:layout_weight="1"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:layout_marginBottom="0dp">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Очистить корзину"
-                    android:padding="5dp"
-                    android:textColor="#ffffff"
-                    android:background="@drawable/shape_button"
-                    android:theme="@style/AppTheme"
-                    android:id="@+id/clearCard" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/shape_button"
-                    android:textColor="#ffffff"
-                    android:text="Продать"
-                    android:layout_alignParentRight="true"
-                    android:id="@+id/toOrder"/>
-            </RelativeLayout>
-        </LinearLayout>
+                android:layout_height="match_parent"
+                android:numColumns="2"/>
+
+        </RelativeLayout>
 
     </android.support.design.widget.CoordinatorLayout>
 

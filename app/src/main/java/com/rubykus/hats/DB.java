@@ -22,28 +22,17 @@ public class DB {
                     CAT_NAME + " text" +
                     ");";
 
-    // create table check
-    private static final String DB_CHECK = "check_table";
-    public static final String CHECK_DATE = "date_check";
-    public static final String CHECK_COST = "total_cost";
-    private static final String DB_CREATE_CHECK =
-            "create table " + DB_CHECK + "(" +
-                    COLUMN_ID + " integer primary key autoincrement, " +
-                    CHECK_DATE + " text," +
-                    CHECK_COST + " real" +
-                    ");";
-
     // create table sales
     private static final String DB_SALE = "sale";
-    public static final String SALE_ID_GOODS = "id_goods";
     public static final String SALE_DATE = "date";
-    public static final String SALE_ID_CHECK = "id_check";
+    public static final String SALE_LIST_GOOD = "info";
+    public static final String SALE_SUM = "sum";
     private static final String DB_CREATE_SALE =
             "create table " + DB_SALE + "(" +
                     COLUMN_ID + " integer primary key autoincrement, " +
-                    SALE_ID_GOODS + " int," +
                     SALE_DATE + " text," +
-                    SALE_ID_CHECK + " int" +
+                    SALE_LIST_GOOD + " text," +
+                    SALE_SUM + " real" +
                     ");";
 
     // create table goods
@@ -86,43 +75,16 @@ public class DB {
         mDB.delete(DB_CAT, COLUMN_ID + " = " + id, null);
     }
 
-    // create methods to with check
-    public Cursor getAllCheck() {
-        return mDB.query(DB_CHECK, null, null, null, null, null, null);
-    }
-    public void addCheck(String date, double cost) {
-        ContentValues cv = new ContentValues();
-        cv.put(CHECK_DATE, date);
-        cv.put(CHECK_COST, cost);
-        mDB.insert(DB_CHECK, null, cv);
-    }
-    public void updateCheck(long id, String date, double cost) {
-        ContentValues cv = new ContentValues();
-        cv.put(CHECK_DATE, date);
-        cv.put(CHECK_COST, cost);
-        mDB.update(DB_CHECK, cv, COLUMN_ID + " = " + id, null);
-    }
-    public void delCheck(long id) {
-        mDB.delete(DB_CHECK, COLUMN_ID + " = " + id, null);
-    }
-
     // create methods to with sale
     public Cursor getAllSale() {
         return mDB.query(DB_SALE, null, null, null, null, null, null);
     }
-    public void addSale(int id_goods, String date, int id_check) {
+    public void addSale(String date, String info, double sum) {
         ContentValues cv = new ContentValues();
-        cv.put(SALE_ID_GOODS, id_goods);
         cv.put(SALE_DATE, date);
-        cv.put(SALE_ID_CHECK, id_check);
+        cv.put(SALE_LIST_GOOD, info);
+        cv.put(SALE_SUM, sum);
         mDB.insert(DB_SALE, null, cv);
-    }
-    public void updateSale(long id, int id_goods, String date, int id_check) {
-        ContentValues cv = new ContentValues();
-        cv.put(SALE_ID_GOODS, id_goods);
-        cv.put(SALE_DATE, date);
-        cv.put(SALE_ID_CHECK, id_check);
-        mDB.update(DB_SALE, cv, COLUMN_ID + " = " + id, null);
     }
     public void delSale(long id) {
         mDB.delete(DB_SALE, COLUMN_ID + " = " + id, null);
@@ -202,26 +164,16 @@ public class DB {
                 cv.put(CAT_NAME, cat_name[i]);
                 db.insert(DB_CAT, null, cv);
             }
-            // create table check
-            db.execSQL(DB_CREATE_CHECK);
-            String[] check_date = new String[] {"12-9-2015", "12-9-2015", "12-9-2015"};
-            double[] cost = new double[]{ 12.12, 144.4, 888.6 };
-            ContentValues ch = new ContentValues();
-            for (int i = 0; i < 3; i++) {
-                ch.put(CHECK_DATE, check_date[i]);
-                ch.put(CHECK_COST, cost[i]);
-                db.insert(DB_CHECK, null, ch);
-            }
             // create table sale
             db.execSQL(DB_CREATE_SALE);
-            int[] sale_id_good = new int[] {1,5,9};
             String[] sale_date = new String[] {"12-9-2015", "12-9-2015", "12-9-2015"};
-            int[] sale_id_check = new int[] {6,4,7};
+            String[] sale_info = new String[] {"dsfasd", "aaaaaaaa", "bbbbbbb"};
+            double[] sale_sum = new double[] {600.12,111.4,337};
             ContentValues cs = new ContentValues();
             for (int i = 0; i < 3; i++) {
-                cs.put(SALE_ID_GOODS, sale_id_good[i]);
                 cs.put(SALE_DATE, sale_date[i]);
-                cs.put(SALE_ID_CHECK, sale_id_check[i]);
+                cs.put(SALE_LIST_GOOD, sale_info[i]);
+                cs.put(SALE_SUM, sale_sum[i]);
                 db.insert(DB_SALE, null, cs);
             }
             // create table good

@@ -45,7 +45,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID Sale"
+        android:text="ID Продажи:"
         android:id="@+id/textView1"
         android:layout_above="@+id/textIDGood"
         android:layout_alignParentLeft="true"
@@ -54,7 +54,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID Good"
+        android:text="Дата:"
         android:id="@+id/textView2"
         android:layout_alignTop="@+id/textIDGood"
         android:layout_alignParentLeft="true"
@@ -63,7 +63,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Date"
+        android:text="Товары:"
         android:id="@+id/textView3"
         android:layout_below="@+id/textView2"
         android:layout_alignParentLeft="true"
@@ -72,7 +72,8 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ID Check"
+        android:text="Сума:"
+        android:textStyle="bold"
         android:id="@+id/textView4"
         android:layout_below="@+id/textDate"
         android:layout_alignParentLeft="true"

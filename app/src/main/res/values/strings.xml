@@ -11,7 +11,6 @@
     <!--sidebar-->
     <string name="categories">Категории</string>
     <string name="goods">Товары</string>
-    <string name="checks">Чеки</string>
     <string name="sales">Продажи</string>
     <string name="footer_menu">Системные</string>
     <string name="about_us">О нас</string>
@@ -19,9 +18,9 @@
     <!--categories-->
     <string name="cat_name">Название категории</string>
     <string name="new_cat">Новая категория</string>
-    <!--check-->
-    <string name="new_check">Новый чек</string>
+    <!--card-->
     <string name="card">Корзина</string>
+    <string name="empty_card">Пустая корзина</string>
     <!--sale-->
     <string name="new_sale">Новая продажа</string>
     <string name="good_name_for_sale">Название товара</string>

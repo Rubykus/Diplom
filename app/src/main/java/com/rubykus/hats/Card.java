@@ -2,11 +2,14 @@ package com.rubykus.hats;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v7.app.AlertDialog;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -25,12 +28,16 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pkmmte.view.CircularImageView;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 
@@ -45,8 +52,9 @@ public class Card extends AppCompatActivity
     ArrayList<HashMap<String, String>> myArrList;
     SimpleAdapter adapter;
     Gson gson = new Gson();
+    DB db;
 
-    Calendar calendar = Calendar.getInstance();
+    Button clear;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -64,15 +72,65 @@ public class Card extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        db = new DB(this);
+
         adapter = getAdapterForPreferences();
+
+        if (adapter.isEmpty()){
+            getSupportActionBar().setTitle(R.string.empty_card);
+        }else{
+            getSupportActionBar().setTitle(R.string.card);
+        }
+
         lv = (ListView)findViewById(R.id.lv);
         lv.setAdapter(adapter);
-        Button clear = (Button)findViewById(R.id.clearCard);
+        clear = (Button)findViewById(R.id.clearCard);
         clear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 data.edit().clear().commit();
                 lv.setAdapter(getAdapterForPreferences());
+            }
+        });
+        Button add = (Button)findViewById(R.id.toOrder);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!myArrList.isEmpty()) {
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+                    String date = sdf.format(new Date());
+                    double sum = 0;
+                    String info = "";
+                    final DecimalFormat twoDForm = new DecimalFormat("#.##");
+                    for (int i = 0; i < myArrList.size(); i++) {
+                        Type type = new TypeToken<HashMap<String, String>>() {
+                        }.getType();
+                        HashMap<String, String> myMap = gson.fromJson(String.valueOf(myArrList.get(i)), type);
+                        String cost = myMap.get("cost");
+                        sum += Double.parseDouble(cost);
+                        info += myMap.get("name") + "     " + myMap.get("count") + "X" + myMap.get("price") + "      " + myMap.get("cost") + " \n";
+                    }
+                    final String finalDate = date;
+                    final String finalInfo = info;
+                    final double finalSum = sum;
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Card.this);
+                    builder.setTitle("Приобрести")
+                            .setMessage("Вы действительно желаете приобрести все товары на суму "
+                                    +Double.valueOf(twoDForm.format(finalSum))+" грн.")
+                            .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    db.open();
+                                    db.addSale(finalDate, finalInfo, Double.valueOf(twoDForm.format(finalSum)));
+                                    db.close();
+                                    clear.performClick();
+                                }
+                            })
+                            .setNegativeButton("Нет", null);
+                    builder.show();
+                } else {
+                    Toast.makeText(Card.this, "Ваша корзина пуста.", Toast.LENGTH_LONG).show();
+                }
             }
         });
         registerForContextMenu(lv);
@@ -201,7 +259,7 @@ public class Card extends AppCompatActivity
             String textInfo = mapRabbit.get("name")+" "+mapRabbit.get("count")+"X"
                     +mapRabbit.get("price");
             info.setText(textInfo);
-            cost.setText(mapRabbit.get("cost"));
+            cost.setText(String.format("%.2f" , Double.parseDouble(mapRabbit.get("cost"))));
 
             return view;
         }

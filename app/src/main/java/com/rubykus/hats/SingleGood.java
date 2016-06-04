@@ -152,8 +152,9 @@ public class SingleGood extends AppCompatActivity {
                                 editor = data.edit();
                                 String json_put = gson.toJson(myArrList);
                                 editor.putString("card_array", json_put);
-                                editor.commit();
-                                Toast.makeText(SingleGood.this, textImg, Toast.LENGTH_LONG).show();
+                                editor.apply();
+                                Toast.makeText(SingleGood.this, "Добавленно.", Toast.LENGTH_LONG).show();
+                                finish();
                             } catch (Exception e){
                                 Toast.makeText(SingleGood.this, "Введите количество товара.", Toast.LENGTH_LONG).show();
                             }

@@ -51,7 +51,7 @@
         android:layout_marginLeft="225dp" />
 
     <com.pkmmte.view.CircularImageView
-        android:src="@drawable/sale"
+        android:src="@drawable/check"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_below="@id/textCat"
@@ -59,19 +59,19 @@
         android:layout_marginLeft="70dp"
         app:border="true"
         app:shadow="true"
-        android:id="@+id/imageSale"/>
+        android:id="@+id/imageCard"/>
 
     <com.pkmmte.view.CircularImageView
-        android:src="@drawable/check"
+        android:src="@drawable/sale"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_below="@id/textGood"
         android:layout_marginTop="20dp"
         android:layout_marginLeft="60dp"
-        android:layout_toRightOf="@id/imageSale"
+        android:layout_toRightOf="@id/imageCard"
         app:border="true"
         app:shadow="true"
-        android:id="@+id/imageCheck"/>
+        android:id="@+id/imageSale"/>
 
     <TextView
         android:layout_width="wrap_content"
@@ -79,14 +79,14 @@
         android:text="@string/sales"
         android:id="@+id/textSale"
         android:layout_below="@+id/imageSale"
-        android:layout_marginLeft="80dp"/>
+        android:layout_marginLeft="222dp"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/card"
         android:id="@+id/textCheck"
-        android:layout_below="@+id/imageCheck"
-        android:layout_marginLeft="235dp" />
+        android:layout_below="@+id/imageCard"
+        android:layout_marginLeft="83dp" />
 
 </RelativeLayout>

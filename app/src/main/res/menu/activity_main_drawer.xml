@@ -10,7 +10,7 @@
             android:title="@string/goods" />
         <item
             android:id="@+id/checks"
-            android:title="@string/checks" />
+            android:title="@string/card" />
         <item
             android:id="@+id/sales"
             android:title="@string/sales" />

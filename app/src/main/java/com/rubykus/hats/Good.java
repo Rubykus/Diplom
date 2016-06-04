@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputFilter;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,7 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +34,7 @@ public class Good extends AppCompatActivity
 
     private static final int CM_DELETE_ID = 1;
     private static final int CM_UPDATE_ID = 2;
-    ListView lv;
+    GridView gv;
     static DB db;
     MyCursorAdapter scAdapter;
     // for dialog cat
@@ -42,7 +43,7 @@ public class Good extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.goods);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(R.string.goods);
@@ -62,26 +63,27 @@ public class Good extends AppCompatActivity
 
         // forming matching columns
         String[] from = new String[] {};
-        int[] to = new int[] { R.id.nameGood, R.id.descrGood, R.id.quantityGood, R.id.imageGood};
+        int[] to = new int[] { R.id.nameGood, R.id.quantityGood, R.id.imageGood};
 
         // create adapter and customizable list
         scAdapter = new MyCursorAdapter(this, R.layout.item_good, null, from, to, 0);
-        lv = (ListView) findViewById(R.id.lv);
-        lv.setAdapter(scAdapter);
+        gv = (GridView) findViewById(R.id.gridGoods);
+        gv.setAdapter(scAdapter);
 
         // add context menu for list
-        registerForContextMenu(lv);
+        registerForContextMenu(gv);
 
         // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
 
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Cursor cursor = scAdapter.getCursor();
                 initGood(cursor);
             }
         });
+
     }
     // initialize single good
     public void initGood(Cursor cursor){
@@ -166,6 +168,7 @@ public class Good extends AppCompatActivity
         final EditText goodFirm = (EditText)view.findViewById(R.id.goodAddFirm);
         final EditText goodQuantity = (EditText)view.findViewById(R.id.goodAddQuantity);
         final EditText goodPrice = (EditText)view.findViewById(R.id.goodAddPrice);
+        goodPrice.setFilters(new InputFilter[]{new DecimalDigitsInputFilter(7,2)});
         final EditText goodImg = (EditText)view.findViewById(R.id.goodAddImg);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         if (cursor == null && id == -1) {

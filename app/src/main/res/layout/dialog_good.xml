@@ -15,6 +15,7 @@
         android:layout_gravity="center_horizontal"/>
     <TextView
         android:id="@+id/goodAddCat"
+        android:textSize="18sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
@@ -56,6 +57,7 @@
     <EditText
         android:id="@+id/goodAddQuantity"
         android:inputType="number"
+        android:maxLength="4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
