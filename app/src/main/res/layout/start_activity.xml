@@ -51,7 +51,7 @@
         android:layout_marginLeft="225dp" />
 
     <com.pkmmte.view.CircularImageView
-        android:src="@drawable/check"
+        android:src="@drawable/card"
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:layout_below="@id/textCat"

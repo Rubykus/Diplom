@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
-import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -214,7 +213,7 @@ public class Card extends AppCompatActivity
             Intent intent = new Intent(this, Good.class);
             startActivity(intent);
             finish();
-        } else if (id == R.id.checks) {
+        } else if (id == R.id.card) {
             onBackPressed();
         } else if (id == R.id.sales) {
             Intent intent = new Intent(this, Sale.class);

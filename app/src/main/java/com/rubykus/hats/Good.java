@@ -307,7 +307,7 @@ public class Good extends AppCompatActivity
             finish();
         } else if (id == R.id.goods) {
             onBackPressed();
-        } else if (id == R.id.checks) {
+        } else if (id == R.id.card) {
             Intent intent = new Intent(this, Card.class);
             startActivity(intent);
             finish();

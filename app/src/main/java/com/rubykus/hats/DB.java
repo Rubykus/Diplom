@@ -161,7 +161,7 @@ public class DB {
 
             // create table categories
             db.execSQL(DB_CREATE_CATEGORIES);
-            String[] cat_name = new String[] {"Ушанка", "Бандана", "Бейсболка", "Шляпа", "Классическая шапка"};
+            String[] cat_name = new String[] {"Шапка", "Кепка", "Шляпа", "Ушанка", "Бререт"};
             ContentValues cv = new ContentValues();
             for (int i = 0; i < 5; i++) {
                 cv.put(CAT_NAME, cat_name[i]);
@@ -169,28 +169,50 @@ public class DB {
             }
             // create table sale
             db.execSQL(DB_CREATE_SALE);
-            String[] sale_date = new String[] {"12-9-2015", "12-9-2015", "12-9-2015"};
-            String[] sale_info = new String[] {"dsfasd", "aaaaaaaa", "bbbbbbb"};
-            double[] sale_sum = new double[] {600.12,111.4,337};
-            ContentValues cs = new ContentValues();
-            for (int i = 0; i < 3; i++) {
-                cs.put(SALE_DATE, sale_date[i]);
-                cs.put(SALE_LIST_GOOD, sale_info[i]);
-                cs.put(SALE_SUM, sale_sum[i]);
-                db.insert(DB_SALE, null, cs);
-            }
             // create table good
             db.execSQL(DB_CREATE_GOOD);
-            String[] good_name = new String[] {"Good1", "Good2", "Good3"};
-            int[] good_id_cat = new int[] {5,6,8};
-            String[] good_color = new String[] {"red", "blue", "green"};
-            String[] good_sex = new String[] {"m", "w", "m"};
-            String[] good_firm = new String[] {"adidas", "nice", "puma"};
-            int[] good_quantity = new int[] {12,54,78};
-            double[] good_price = new double[] {450.12, 87.02, 96.89};
-            String[] good_image = new String[] {"Download/hat.jpg", "Download/hat.jpg", "Download/hat.jpg"};
+            String[] good_name = new String[] {"Lonsdale", "DAKINE Chase", "DAKINE Scruntch", "AC ZIGGY BEANIE", "Finn Flare", "Dakine Taryn",
+                    "Бейсболка Traum","Converse All Star","Goorin Brothers","True Spin","Fete Бейсболка","Seafolly",
+                    "Kent & Aver","Шляпа ALDO","DEL MARE","Beretta","Eterno","River Island",
+                    "Celina Crystal","PARADISE WINTER","GULLIVER","Garcia Fleece","Gamakatsu","Salmo",
+                    "Canoe","Dakine","Top Shop","Ferz","To be Queen","Paola Belleza"};
+            String[] good_sex = new String[] {"женский","универсальный","мужской","женский","мужской","мужской",
+                    "универсальный","универсальный","универсальный","универсальный","универсальный","женский",
+                    "женский","мужской","женский","мужской","женский","женский",
+                    "женский","женский","мужской","мужской","мужской","мужской",
+                    "женский","женский","женский","женский","женский","женский"};
+            String[] good_firm = new String[] {"Lonsdale","DAKINE","DAKINE","O`Neill","Finn Flare","DAKINE",
+                    "Traum","Converse","Goorin Bros","True Spin","Fete","Seafolly",
+                    "Kent & Aver","ALDO","DEL MARE","Beretta","Eterno","River Island",
+                    "Eisbar","ROXY","Dakine","Abu","Gamakatsu","Salmo",
+                    "Canoe","Dakine","Top Shop","Ferz","To be Queen","Paola Belleza"};
+            int[] good_id_cat = new int[] {1,1,1,1,1,1,
+                    2,2,2,2,2,2,
+                    3,3,3,3,3,3,
+                    4,4,4,4,4,4,
+                    5,5,5,5,5,5};
+            String[] good_color = new String[] {"мультиколор","мультиколор","чёрный","чёрный","синий","чёрный",
+                    "мультиколор","синий","мультиколор","синий","белый","бежевый",
+                    "мультиколор","серый","мультиколор","зеленый","коричневый","бежевый",
+                    "синий","чёрный","серый","зеленый","чёрный","зеленый",
+                    "чёрный","чёрный","бежевый","чёрный","чёрный","бежевый"};
+            int[] good_quantity = new int[] {5,15,4,21,16,34,
+                    21,12,32,22,25,23,
+                    23,61,45,12,74,13,
+                    32,15,45,23,65,9,
+                    10,20,30,14,51,69};
+            double[] good_price = new double[] {197,249,599,274,254,689,
+                    196,239,950,132,314,790,
+                    239,399,199,1366,233,1031,
+                    2569,1000,1129,423,332,125,
+                    284,729,650,790,371,255};
+            String[] good_image = new String[] {"Download/lonsdale.jpg","Download/dakine_chase.jpg","Download/dakine_scruntch.jpg","Download/ac_ziggy.jpg","Download/finn_flare.jpg","Download/dakine_taryn.jpg",
+                    "Download/traum.jpg","Download/converse.jpg","Download/goorin_bros.jpg","Download/true_spin.jpg","Download/fete.jpg","Download/seafolly.jpg",
+                    "Download/kent_aver.jpg","Download/aldo.jpg","Download/del_mare.jpg","Download/beretta.jpg","Download/eterno.jpg","Download/river.jpg",
+                    "Download/eisbar.jpg","Download/roxy.jpg","Download/dakine.jpg","Download/garcia.jpg","Download/gamakatsu.jpg","Download/salmo.jpg",
+                    "Download/canoe_b.jpg","Download/dakine_b.jpg","Download/top.jpg","Download/ferz_b.jpg","Download/to_be.jpg","Download/paola.jpg"};
             ContentValues cg = new ContentValues();
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < good_name.length; i++) {
                 cg.put(GOOD_NAME, good_name[i]);
                 cg.put(GOOD_ID_CAT, good_id_cat[i]);
                 cg.put(GOOD_COLOR, good_color[i]);

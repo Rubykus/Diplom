@@ -28,6 +28,12 @@ public class MyCursorAdapter extends SimpleCursorAdapter {
         double price = _cursor.getDouble(_cursor.getColumnIndex(DB.GOOD_PRICE));
         String img = _cursor.getString(_cursor.getColumnIndex(DB.GOOD_IMAGE));
         ImageView imgGood = (ImageView) view.findViewById(R.id.imageGood);
+
+        /*ViewGroup.LayoutParams params = imgGood.getLayoutParams();
+        params.width = (int) (screenWidth / 2.2);
+        params.height = (int) (screenHeight / 2.9);
+        imgGood.setLayoutParams(params);*/
+
         Uri path = Uri.parse(Environment.getExternalStorageDirectory().toString()+"/"+img);
         imgGood.setImageURI(path);
         TextView goodName = (TextView)view.findViewById(R.id.nameGood);
