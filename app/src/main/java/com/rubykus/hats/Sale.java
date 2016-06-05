@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.ContextCompat;
@@ -30,13 +31,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 
 public class Sale extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int CM_DELETE_ID = 1;
+    private static final int CM_CREATE_CHECK = 1;
+    private static final int CM_DELETE_ID = 2;
 
     ListView lv;
     DB db;
@@ -126,6 +131,7 @@ public class Sale extends AppCompatActivity
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, CM_CREATE_CHECK, 0, R.string.create_check);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
@@ -140,6 +146,27 @@ public class Sale extends AppCompatActivity
             // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
+        } else if (item.getItemId() == CM_CREATE_CHECK) {
+            Cursor cursor = scAdapter.getCursor();
+            String sFileName = "sale-"+cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID))+".txt";
+            String sBody = "Код продажи: "+cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID))
+                    +"\n\nДата: "+cursor.getString(cursor.getColumnIndex(DB.SALE_DATE))
+                    +"\n\nТовары:\n"+cursor.getString(cursor.getColumnIndex(DB.SALE_LIST_GOOD))
+                    +"\n\nСумма: "+cursor.getString(cursor.getColumnIndex(DB.SALE_SUM));
+            try {
+                File root = new File(Environment.getExternalStorageDirectory(), "Check");
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                File gpxfile = new File(root, sFileName);
+                FileWriter writer = new FileWriter(gpxfile);
+                writer.write(sBody);
+                writer.flush();
+                writer.close();
+                Toast.makeText(this, "Сохранено на sd-карте в папке Check", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Toast.makeText(this, "Ошибка.", Toast.LENGTH_SHORT).show();
+            }
         }
         return super.onContextItemSelected(item);
     }

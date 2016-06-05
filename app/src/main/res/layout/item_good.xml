@@ -1,15 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="185dp"
-    android:layout_height="250dp">
-
-    <ImageView
-    android:layout_width="match_parent"
-    android:layout_height="200dp"
-    android:id="@+id/imageGood"
-    android:layout_below="@+id/nameGood"
-    xmlns:android="http://schemas.android.com/apk/res/android" />
+    android:layout_height="250dp"
+    android:background="@drawable/shape_item_good"
+    android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
@@ -18,26 +13,38 @@
         android:textStyle="bold"
         android:text="Large Text"
         android:id="@+id/nameGood"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-    <TextView
-        android:layout_width="wrap_content"
+        android:layout_weight="0.1"
+        android:paddingLeft="10dp"/>
+    <ImageView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        android:text="Medium Text"
-        android:id="@+id/quantityGood"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"/>
-    <TextView
-        android:layout_width="wrap_content"
+        android:id="@+id/imageGood"
+        android:layout_weight="0.8"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:textStyle="italic"
-        android:text="Medium Text"
-        android:id="@+id/goodPrice"
-        android:layout_gravity="center_horizontal"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"/>
+        android:orientation="horizontal"
+        android:layout_weight="0.1"
+        android:gravity="bottom">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="italic"
+            android:text="Medium Text"
+            android:id="@+id/quantityGood"
+            android:paddingLeft="5dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:text="Medium Text"
+            android:id="@+id/goodPrice"
+            android:layout_alignParentRight="true"
+            android:paddingRight="5dp"
+            />
+    </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

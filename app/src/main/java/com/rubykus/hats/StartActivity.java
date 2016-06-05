@@ -19,11 +19,10 @@ public class StartActivity extends Activity {
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
-        double height = displaymetrics.heightPixels /*/ this.getResources().getDisplayMetrics().density*/;
-        double width = displaymetrics.widthPixels /*/ this.getResources().getDisplayMetrics().density*/;
+        double height = displaymetrics.heightPixels;
+        double width = displaymetrics.widthPixels;
         screenHeight = (int)height;
         screenWidth = (int)width;
-        Toast.makeText(this, screenHeight+"|"+width, Toast.LENGTH_LONG).show();
 
         CircularImageView cat = (CircularImageView)findViewById(R.id.imageCat);
         cat.setOnClickListener(new View.OnClickListener() {

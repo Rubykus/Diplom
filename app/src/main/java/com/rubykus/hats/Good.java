@@ -34,6 +34,11 @@ public class Good extends AppCompatActivity
 
     private static final int CM_DELETE_ID = 1;
     private static final int CM_UPDATE_ID = 2;
+    private static final int CM_ADD_ID = 1;
+    private static final int CM_CAT_ID = 2;
+    private static final int CM_ALL_ID = 3;
+    private static final int ADD_DIALOG = 1;
+    private static final int SORT_DIALOG = 2;
     GridView gv;
     static DB db;
     MyCursorAdapter scAdapter;
@@ -112,12 +117,14 @@ public class Good extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        menu.add(0, CM_ADD_ID,0, R.string.add);
+        menu.add(0, CM_CAT_ID,0, R.string.categories);
+        menu.add(0, CM_ALL_ID,0, R.string.all_good);
         return true;
     }
     // initialize dialog good list
-    public void showDialogInner(final TextView tv){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void showDialogInner(final TextView tv, final int id){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Cursor cur = db.getAllCat();
         int countRow = cur.getCount();
         final String[] cat_name = new String[countRow];
@@ -130,12 +137,22 @@ public class Good extends AppCompatActivity
             cat_id[i] = index;
         }
         builder.setTitle("Выберите категорию")
-                .setItems(cat_name, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+            .setItems(cat_name, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    if (id == ADD_DIALOG) {
                         tv.setText(cat_name[which]);
                         index_cat = cat_id[which];
+                    } else if (id == SORT_DIALOG) {
+                            Cursor cursor = db.getAllGoodByCat(cat_id[which]);
+                            if (cursor.getCount() == 0) {
+                                Toast.makeText(Good.this, "Товаров с такой категорией не найдено.", Toast.LENGTH_LONG).show();
+                            } else {
+                                getSupportActionBar().setTitle(cat_name[which]);
+                                scAdapter.swapCursor(cursor);
+                            }
                     }
-                });
+                }
+            });
         AlertDialog dialog_choose = builder.create();
         dialog_choose.show();
     }
@@ -160,7 +177,7 @@ public class Good extends AppCompatActivity
         goodIdCat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showDialogInner(goodIdCat);
+                showDialogInner(goodIdCat, ADD_DIALOG);
             }
         });
         final EditText goodColor = (EditText)view.findViewById(R.id.goodAddColor);
@@ -209,7 +226,7 @@ public class Good extends AppCompatActivity
             goodIdCat.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    showDialogInner(goodIdCat);
+                    showDialogInner(goodIdCat, ADD_DIALOG);
                 }
             });
             goodColor.setText(cursor.getString(cursor.getColumnIndex(DB.GOOD_COLOR)));
@@ -266,10 +283,15 @@ public class Good extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.add) {
+        if (id == CM_ADD_ID) {
             initDialog(null, -1);
+        } else if (id == CM_CAT_ID){
+            showDialogInner(null, SORT_DIALOG);
+        } else if (id == CM_ALL_ID){
+            Cursor cursor = db.getAllGood();
+            scAdapter.swapCursor(cursor);
+            getSupportActionBar().setTitle(R.string.goods);
         }
-
         return super.onOptionsItemSelected(item);
     }
 

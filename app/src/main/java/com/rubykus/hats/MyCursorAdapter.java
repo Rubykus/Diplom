@@ -43,8 +43,8 @@ public class MyCursorAdapter extends SimpleCursorAdapter {
         LayoutInflater inflater = (LayoutInflater) _context.getSystemService(_context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(layout, parent, false);
         ViewGroup.LayoutParams params = view.getLayoutParams();
-        params.width = (int) (screenWidth / 2.1);
-        params.height = (int) (screenHeight / 2.1);
+        params.width = (int) (screenWidth / 2.05);
+        params.height = (int) (screenHeight / 2.5);
         view.setLayoutParams(params);
         return view;
     }

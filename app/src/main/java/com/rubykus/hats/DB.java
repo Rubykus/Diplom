@@ -94,6 +94,9 @@ public class DB {
     public Cursor getAllGood() {
         return mDB.query(DB_GOOD, null, null, null, null, null, null);
     }
+    public Cursor getAllGoodByCat(int id_cat) {
+        return mDB.query(DB_GOOD, null, GOOD_ID_CAT+"=?", new String[]{String.valueOf(id_cat)}, null, null, null);
+    }
     public void addGood(String name, int id_cat, String color, String sex,
                         String firm, int quantity, double price, String image) {
         ContentValues cv = new ContentValues();

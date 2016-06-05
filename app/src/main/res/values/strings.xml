@@ -24,7 +24,9 @@
     <!--sale-->
     <string name="new_sale">Новая продажа</string>
     <string name="good_name_for_sale">Название товара</string>
+    <string name="create_check">Создать чек</string>
     <!--goods-->
+    <string name="all_good">Все товары</string>
     <string name="id">Код товара</string>
     <string name="good_name">Название</string>
     <string name="cat_name_for_good">Категория</string>
