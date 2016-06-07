@@ -35,6 +35,25 @@ public class DB {
                     SALE_SUM + " real" +
                     ");";
 
+    // create table basket
+    private static final String DB_BASKET = "card";
+    public static final String BASKET_ID_GOOD = "id_good";
+    public static final String BASKET_NAME_GOOD = "name_good";
+    public static final String BASKET_COUNT_GOOD = "count_good";
+    public static final String BASKET_PRICE_GOOD = "price_good";
+    public static final String BASKET_SUM = "sum";
+    public static final String BASKET_IMG_GOOD = "img";
+    private static final String DB_CREATE_BASKET =
+            "create table " + DB_BASKET + "(" +
+                    COLUMN_ID + " integer primary key autoincrement, " +
+                    BASKET_ID_GOOD + " int, " +
+                    BASKET_NAME_GOOD + " text, " +
+                    BASKET_COUNT_GOOD + " int, " +
+                    BASKET_PRICE_GOOD + " real, " +
+                    BASKET_SUM + " real, " +
+                    BASKET_IMG_GOOD + " text" +
+                    ");";
+
     // create table goods
     private static final String DB_GOOD = "goods";
     public static final String GOOD_NAME = "name";
@@ -73,6 +92,37 @@ public class DB {
     }
     public void delCat(long id) {
         mDB.delete(DB_CAT, COLUMN_ID + " = " + id, null);
+    }
+
+    // create methods to with basket
+    public Cursor getBasket() {
+        return mDB.query(DB_BASKET, null, null, null, null, null, null);
+    }
+    public void addItemBasket(int id_good, String name,int count,double price, double sum, String img) {
+        ContentValues cv = new ContentValues();
+        cv.put(BASKET_ID_GOOD, id_good);
+        cv.put(BASKET_NAME_GOOD, name);
+        cv.put(BASKET_COUNT_GOOD, count);
+        cv.put(BASKET_PRICE_GOOD, price);
+        cv.put(BASKET_SUM, sum);
+        cv.put(BASKET_IMG_GOOD, img);
+        mDB.insert(DB_BASKET, null, cv);
+    }
+    public void updateItemBasket(long id, int id_good, String name,int count,double price, double sum, String img) {
+        ContentValues cv = new ContentValues();
+        cv.put(BASKET_ID_GOOD, id_good);
+        cv.put(BASKET_NAME_GOOD, name);
+        cv.put(BASKET_COUNT_GOOD, count);
+        cv.put(BASKET_PRICE_GOOD, price);
+        cv.put(BASKET_SUM, sum);
+        cv.put(BASKET_IMG_GOOD, img);
+        mDB.update(DB_BASKET, cv, COLUMN_ID + " = " + id, null);
+    }
+    public void delItemBasket(long id) {
+        mDB.delete(DB_BASKET, COLUMN_ID + " = " + id, null);
+    }
+    public void delBasket() {
+        mDB.delete(DB_BASKET, null, null);
     }
 
     // create methods to with sale
@@ -169,6 +219,8 @@ public class DB {
             }
             // create table sale
             db.execSQL(DB_CREATE_SALE);
+            // create table basket
+            db.execSQL(DB_CREATE_BASKET);
             // create table good
             db.execSQL(DB_CREATE_GOOD);
             String[] good_name = new String[] {"Lonsdale", "DAKINE Chase", "DAKINE Scruntch", "AC ZIGGY BEANIE", "Finn Flare", "Dakine Taryn",

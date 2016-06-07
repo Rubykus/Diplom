@@ -15,7 +15,7 @@
         </activity>
         <activity
             android:screenOrientation="portrait"
-            android:name=".Card"
+            android:name=".Basket"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity

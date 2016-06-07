@@ -90,6 +90,7 @@ public class Good extends AppCompatActivity
         });
 
     }
+
     // initialize single good
     public void initGood(Cursor cursor){
         Intent intent = new Intent(this, SingleGood.class);
@@ -308,7 +309,7 @@ public class Good extends AppCompatActivity
         } else if (id == R.id.goods) {
             onBackPressed();
         } else if (id == R.id.card) {
-            Intent intent = new Intent(this, Card.class);
+            Intent intent = new Intent(this, Basket.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {

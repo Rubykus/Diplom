@@ -3,6 +3,7 @@ package com.rubykus.hats;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -23,6 +24,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static com.rubykus.hats.Good.db;
 import static com.rubykus.hats.Good.getNameCat;
 
 public class SingleGood extends AppCompatActivity {
@@ -103,60 +105,36 @@ public class SingleGood extends AppCompatActivity {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             try {
-                                map = new HashMap<String, String>();
-                                map.put("id", String.valueOf(varId));
-                                map.put("name", varName);
                                 varCount = Integer.parseInt(count.getText().toString());
-                                map.put("count", count.getText().toString());
-                                map.put("price", String.valueOf(varPrice));
                                 double cost = varCount * varPrice;
-                                map.put("cost", String.valueOf(cost));
-                                String img[] = textImg.split("/");
-                                textImg = TextUtils.join("~", img);
-                                map.put("img", textImg);
-
-                                Gson gson = new Gson();
-                                data = getSharedPreferences("card", MODE_PRIVATE);
-                                String json_get = data.getString("card_array", "");
-                                if (!json_get.isEmpty()){
-                                    myArrList = (ArrayList)gson.fromJson(json_get, ArrayList.class).clone();
-                                }else{
-                                    myArrList = new ArrayList<>();
-                                }
-
-                                ArrayList jsonArrayList = new ArrayList();
-                                for (int i = 0; i<myArrList.size(); i++) {
-                                    Type type = new TypeToken<HashMap<String, String>>(){}.getType();
-                                    HashMap<String, String> myMap = gson.fromJson(String.valueOf(myArrList.get(i)), type);
-                                    jsonArrayList.add(myMap);
-                                }
-
+                                Cursor cursor = db.getBasket();
+                                int countRow = cursor.getCount();
                                 int counter = 0;
-                                for (int i = 0; i<jsonArrayList.size(); i++) {
-                                    HashMap<String, String> mapRabbit = (HashMap<String, String>) jsonArrayList.get(i);
-                                    if (mapRabbit.get("id").equals(map.get("id"))){
-                                        int count_old = Integer.parseInt(mapRabbit.get("count"));
-                                        double cost_old = Double.parseDouble(mapRabbit.get("cost"));
-                                        mapRabbit.put("count", String.valueOf(count_old+varCount));
-                                        mapRabbit.put("cost", String.valueOf(cost_old+varCount*varPrice));
-                                        jsonArrayList.set(i, mapRabbit);
-                                        counter = 1;
+                                for (int i = 0; i < countRow; i++) {
+                                    cursor.moveToNext();
+                                    if (varId == cursor.getInt(cursor.getColumnIndex(DB.BASKET_ID_GOOD))) {
+                                        db.updateItemBasket(cursor.getLong(cursor.getColumnIndex(DB.COLUMN_ID)),
+                                                cursor.getInt(cursor.getColumnIndex(DB.BASKET_ID_GOOD)),
+                                                cursor.getString(cursor.getColumnIndex(DB.BASKET_NAME_GOOD)),
+                                                cursor.getInt(cursor.getColumnIndex(DB.BASKET_COUNT_GOOD)) + varCount,
+                                                cursor.getDouble(cursor.getColumnIndex(DB.BASKET_PRICE_GOOD)),
+                                                cursor.getDouble(cursor.getColumnIndex(DB.BASKET_SUM)) + cost,
+                                                cursor.getString(cursor.getColumnIndex(DB.BASKET_IMG_GOOD))
+                                        );
+                                    } else {
+                                        counter++;
                                     }
                                 }
-                                if (counter == 0){
-                                    myArrList.add(map);
-                                }else {
-                                    myArrList = (ArrayList<HashMap<String, String>>) jsonArrayList.clone();
+                                if (counter == countRow) {
+                                    db.addItemBasket(varId, varName, varCount, varPrice, cost, textImg);
+                                    Toast.makeText(SingleGood.this, "Товар добавлен.", Toast.LENGTH_LONG).show();
+                                    finish();
+                                } else {
+                                    Toast.makeText(SingleGood.this, "Товар обновлен.", Toast.LENGTH_LONG).show();
+                                    finish();
                                 }
-
-                                editor = data.edit();
-                                String json_put = gson.toJson(myArrList);
-                                editor.putString("card_array", json_put);
-                                editor.apply();
-                                Toast.makeText(SingleGood.this, "Добавленно.", Toast.LENGTH_LONG).show();
-                                finish();
                             } catch (Exception e){
-                                Toast.makeText(SingleGood.this, "Введите количество товара.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(SingleGood.this, "Введите количество.", Toast.LENGTH_LONG).show();
                             }
                         }
                     })

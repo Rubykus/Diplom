@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.Toast;
 
 import com.pkmmte.view.CircularImageView;
 
@@ -55,7 +54,7 @@ public class StartActivity extends Activity {
         check.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, Card.class);
+                Intent intent = new Intent(StartActivity.this, Basket.class);
                 startActivity(intent);
                 finish();
             }

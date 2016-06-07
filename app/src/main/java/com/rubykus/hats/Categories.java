@@ -173,7 +173,7 @@ public class Categories extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.card) {
-            Intent intent = new Intent(this, Card.class);
+            Intent intent = new Intent(this, Basket.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {

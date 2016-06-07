@@ -1,9 +1,12 @@
 package com.rubykus.hats;
 
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
@@ -38,6 +41,7 @@ public class Sale extends AppCompatActivity
     DB db;
     SimpleCursorAdapter scAdapter;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,8 +70,9 @@ public class Sale extends AppCompatActivity
         // create adapter and customizable list
         scAdapter = new SimpleCursorAdapter(this, R.layout.item_sale, null, from, to, 0);
         lv = (ListView) findViewById(R.id.lv);
+        ColorDrawable sage = new ColorDrawable(this.getResources().getColor(R.color.colorDivider));
+        lv.setDivider(sage);
         lv.setDividerHeight(50);
-        lv.setBackgroundColor(ContextCompat.getColor(this, R.color.colorWhite));
         lv.setAdapter(scAdapter);
 
         // add context menu for list
@@ -102,7 +107,7 @@ public class Sale extends AppCompatActivity
             startActivity(intent);
             finish();
         } else if (id == R.id.card) {
-            Intent intent = new Intent(this, Card.class);
+            Intent intent = new Intent(this, Basket.class);
             startActivity(intent);
             finish();
         } else if (id == R.id.sales) {
