@@ -11,16 +11,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputType;
-import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.lang.reflect.Type;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -83,7 +80,7 @@ public class SingleGood extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        menu.add(0, CM_CARD_ID, 0, R.string.add_to_card);
+        menu.add(0, CM_CARD_ID, 0, R.string.add_to_basket);
         return true;
     }
     @Override
@@ -98,7 +95,7 @@ public class SingleGood extends AppCompatActivity {
             final EditText count = new EditText(this);
             count.setInputType(InputType.TYPE_CLASS_NUMBER);
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.add_to_card)
+            builder.setTitle(R.string.add_to_basket)
                     .setMessage("Введите количество товара.")
                     .setView(count)
                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {

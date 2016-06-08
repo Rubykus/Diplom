@@ -19,8 +19,8 @@
     <string name="cat_name">Название категории</string>
     <string name="new_cat">Новая категория</string>
     <!--card-->
-    <string name="card">Корзина</string>
-    <string name="empty_card">Пустая корзина</string>
+    <string name="basket">Корзина</string>
+    <string name="empty_basket">Пустая корзина</string>
     <!--sale-->
     <string name="new_sale">Новая продажа</string>
     <string name="good_name_for_sale">Название товара</string>
@@ -42,6 +42,6 @@
     <string name="cost">Стоимость</string>
     <string name="cancle">Отмена</string>
     <string name="error_validations">Неправильно введены данные</string>
-    <string name="add_to_card">В корзину</string>
+    <string name="add_to_basket">В корзину</string>
 
 </resources>

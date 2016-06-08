@@ -27,4 +27,5 @@ dependencies {
     compile 'com.pkmmte.view:circularimageview:1.1'
     compile 'com.google.code.gson:gson:2.6.2'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
+    compile 'com.itextpdf:itextg:5.5.9'
 }

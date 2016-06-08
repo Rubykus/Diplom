@@ -4,7 +4,6 @@ package com.rubykus.hats;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,9 +11,7 @@ import android.os.Environment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.widget.CursorAdapter;
 import android.support.v7.app.AlertDialog;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,30 +21,23 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pkmmte.view.CircularImageView;
-import java.lang.reflect.Type;
+
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-
-
-import static com.rubykus.hats.SingleGood.data;
 
 public class Basket extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -82,10 +72,10 @@ public class Basket extends AppCompatActivity
         db = new DB(this);
         db.open();
         Cursor cursor = db.getBasket();
-        if (cursor == null){
-            getSupportActionBar().setTitle("Пустая корзина.");
+        if (cursor.getCount() == 0){
+            getSupportActionBar().setTitle(R.string.empty_basket);
         }else {
-            getSupportActionBar().setTitle("Корзина.");
+            getSupportActionBar().setTitle(R.string.basket);
         }
         // forming matching columns
         String[] from = new String[] {};
@@ -124,7 +114,7 @@ public class Basket extends AppCompatActivity
             @Override
             public void onClick(View v) {
                 Cursor cursor = db.getBasket();
-                if (cursor != null) {
+                if (cursor.getCount() != 0) {
                     SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm");
                     String date = sdf.format(new Date());
                     double sum = 0;

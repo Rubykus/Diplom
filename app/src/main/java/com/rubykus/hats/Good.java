@@ -1,10 +1,13 @@
 package com.rubykus.hats;
 
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -16,6 +19,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.InputFilter;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -27,6 +31,20 @@ import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Element;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 
 public class Good extends AppCompatActivity
@@ -37,6 +55,7 @@ public class Good extends AppCompatActivity
     private static final int CM_ADD_ID = 1;
     private static final int CM_CAT_ID = 2;
     private static final int CM_ALL_ID = 3;
+    private static final int CM_PRICE_LIST_ID = 4;
     private static final int ADD_DIALOG = 1;
     private static final int SORT_DIALOG = 2;
     GridView gv;
@@ -121,6 +140,7 @@ public class Good extends AppCompatActivity
         menu.add(0, CM_ADD_ID,0, R.string.add);
         menu.add(0, CM_CAT_ID,0, R.string.categories);
         menu.add(0, CM_ALL_ID,0, R.string.all_good);
+        menu.add(0, CM_PRICE_LIST_ID,0, "Прайс-лист");
         return true;
     }
     // initialize dialog good list
@@ -292,6 +312,118 @@ public class Good extends AppCompatActivity
             Cursor cursor = db.getAllGood();
             scAdapter.swapCursor(cursor);
             getSupportActionBar().setTitle(R.string.goods);
+        } else if (id == CM_PRICE_LIST_ID) {
+            Cursor cursor = db.getAllGood();
+            final String sFileName = "price-list.pdf";
+            String sBody = "Price list \n\n";
+            int rowCount = cursor.getCount();
+
+            PdfPTable table = new PdfPTable(3);
+
+            PdfPCell cell = new PdfPCell(new Phrase("Good"));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("Quantity"));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+
+            cell = new PdfPCell(new Phrase("Price"));
+            cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+            table.addCell(cell);
+            table.setHeaderRows(1);
+
+            for (int i= 0; i<rowCount; i++){
+                cursor.moveToNext();
+                table.addCell(cursor.getString(cursor.getColumnIndex(DB.GOOD_NAME)));
+                table.addCell(cursor.getString(cursor.getColumnIndex(DB.GOOD_QUANTITY)));
+                table.addCell(cursor.getString(cursor.getColumnIndex(DB.GOOD_PRICE))+" UAH");
+            }
+
+            Document doc = new Document();
+
+            try {
+
+                File root = new File(Environment.getExternalStorageDirectory(), "Price-list");
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+
+                File priceList = new File(root, sFileName);
+                FileOutputStream fOut = new FileOutputStream(priceList);
+
+                PdfWriter.getInstance(doc, fOut);
+
+                //open the document
+                doc.open();
+
+                Paragraph p1 = new Paragraph("Price-list");
+                p1.setAlignment(Paragraph.ALIGN_CENTER);
+                p1.setSpacingAfter(10);
+
+                //add paragraph to document
+                doc.add(p1);
+                doc.add(table);
+
+            } catch (DocumentException de) {
+                Log.e("PDFCreator", "DocumentException:" + de);
+            } catch (IOException e) {
+                Log.e("PDFCreator", "ioException:" + e);
+            } finally {
+                doc.close();
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(Good.this);
+            builder.setMessage("Открыть прайс-лист?")
+                    .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            File pdfFile = new File(Environment.getExternalStorageDirectory() + "/Price-list/" + sFileName);
+                            Uri path = Uri.fromFile(pdfFile);
+
+                            // Setting the intent for pdf reader
+                            Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
+                            pdfIntent.setDataAndType(path, "application/pdf");
+                            pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+                            try {
+                                startActivity(pdfIntent);
+                            } catch (ActivityNotFoundException e) {
+                                Toast.makeText(Good.this, "Can't read pdf file", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    })
+                    .setNegativeButton("Нет", null);
+            builder.show();
+
+            /*try {
+                File root = new File(Environment.getExternalStorageDirectory(), "Price-list");
+                if (!root.exists()) {
+                    root.mkdirs();
+                }
+                final File gpxfile = new File(root, sFileName);
+                FileWriter writer = new FileWriter(gpxfile);
+                writer.write(sBody);
+                writer.flush();
+                writer.close();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(Good.this);
+                builder.setMessage("Открыть прайс-лист?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent();
+                                i.setAction(android.content.Intent.ACTION_VIEW);
+                                i.setDataAndType(Uri.fromFile(gpxfile), "text/plain");
+                                startActivity(i);
+                            }
+                        })
+                        .setNegativeButton("Нет", null);
+                builder.show();
+
+            } catch (IOException e) {
+                Toast.makeText(this, "Ошибка.", Toast.LENGTH_SHORT).show();
+            }*/
         }
         return super.onOptionsItemSelected(item);
     }

@@ -2,10 +2,13 @@ package com.rubykus.hats;
 
 
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -18,8 +21,10 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SimpleCursorAdapter;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,7 +32,19 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Font;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -40,6 +57,11 @@ public class Sale extends AppCompatActivity
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -64,8 +86,8 @@ public class Sale extends AppCompatActivity
         db.open();
 
         // forming matching columns
-        String[] from = new String[] { DB.COLUMN_ID, DB.SALE_DATE, DB.SALE_LIST_GOOD, DB.SALE_SUM};
-        int[] to = new int[] { R.id.textIDSale, R.id.textIDGood, R.id.textDate, R.id.textIDCheck};
+        String[] from = new String[]{DB.COLUMN_ID, DB.SALE_DATE, DB.SALE_LIST_GOOD, DB.SALE_SUM};
+        int[] to = new int[]{R.id.textIDSale, R.id.textIDGood, R.id.textDate, R.id.textIDCheck};
 
         // create adapter and customizable list
         scAdapter = new SimpleCursorAdapter(this, R.layout.item_sale, null, from, to, 0);
@@ -80,6 +102,9 @@ public class Sale extends AppCompatActivity
 
         // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -123,6 +148,7 @@ public class Sale extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
     // my cod
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
@@ -144,22 +170,37 @@ public class Sale extends AppCompatActivity
             return true;
         } else if (item.getItemId() == CM_CREATE_CHECK) {
             Cursor cursor = scAdapter.getCursor();
-            String sFileName = "sale-"+cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID))+".txt";
-            String sBody = "Код продажи: "+cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID))
-                    +"\n\nДата: "+cursor.getString(cursor.getColumnIndex(DB.SALE_DATE))
-                    +"\n\nТовары:\n"+cursor.getString(cursor.getColumnIndex(DB.SALE_LIST_GOOD))
-                    +"\n\nСумма: "+cursor.getString(cursor.getColumnIndex(DB.SALE_SUM));
+            final String sFileName = "sale-" + cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID)) + ".pdf";
+            String sBody = "Код продажи: " + cursor.getString(cursor.getColumnIndex(DB.COLUMN_ID))
+                    + "\n\nДата: " + cursor.getString(cursor.getColumnIndex(DB.SALE_DATE))
+                    + "\n\nТовары:\n" + cursor.getString(cursor.getColumnIndex(DB.SALE_LIST_GOOD))
+                    + "\n\nСумма: " + cursor.getString(cursor.getColumnIndex(DB.SALE_SUM));
+
+
             try {
                 File root = new File(Environment.getExternalStorageDirectory(), "Check");
                 if (!root.exists()) {
                     root.mkdirs();
                 }
-                File gpxfile = new File(root, sFileName);
+                final File gpxfile = new File(root, sFileName);
                 FileWriter writer = new FileWriter(gpxfile);
                 writer.write(sBody);
                 writer.flush();
                 writer.close();
-                Toast.makeText(this, "Сохранено на sd-карте в папке Check", Toast.LENGTH_SHORT).show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(Sale.this);
+                builder.setMessage("Открыть прайс-лист?")
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent i = new Intent();
+                                i.setAction(android.content.Intent.ACTION_VIEW);
+                                i.setDataAndType(Uri.fromFile(gpxfile), "text/plain");
+                                startActivity(i);
+                            }
+                        })
+                        .setNegativeButton("Нет", null);
+                builder.show();
             } catch (IOException e) {
                 Toast.makeText(this, "Ошибка.", Toast.LENGTH_SHORT).show();
             }
@@ -185,6 +226,46 @@ public class Sale extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Sale Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.rubykus.hats/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Sale Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app URL is correct.
+                Uri.parse("android-app://com.rubykus.hats/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 
     static class MyCursorLoader extends CursorLoader {
