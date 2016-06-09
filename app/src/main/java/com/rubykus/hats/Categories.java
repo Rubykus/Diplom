@@ -52,11 +52,9 @@ public class Categories extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // open a connection to the db
         db = new DB(this);
         db.open();
 
-        // forming matching columns
         String[] from = new String[] { DB.CAT_NAME};
         int[] to = new int[] { R.id.tvNameCat };
 
@@ -65,10 +63,8 @@ public class Categories extends AppCompatActivity
         lv = (ListView) findViewById(R.id.lv);
         lv.setAdapter(scAdapter);
 
-        // add context menu for list
         registerForContextMenu(lv);
 
-        // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
 
     }
@@ -85,11 +81,9 @@ public class Categories extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
-    // initialize dialog
     public void initDialog(Cursor cursor, final long id){
         View view = LayoutInflater.from(Categories.this).inflate(R.layout.dialog_cat, null);
         final EditText nameCat = (EditText)view.findViewById(R.id.nameAddCat);
@@ -147,12 +141,8 @@ public class Categories extends AppCompatActivity
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.add) {
             initDialog(null, -1);
         }
@@ -163,7 +153,6 @@ public class Categories extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.categories) {
@@ -191,7 +180,6 @@ public class Categories extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    // my cod
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -203,11 +191,7 @@ public class Categories extends AppCompatActivity
         final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                 .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
-            // obtain from the context menu item list data
-
-            // retrieve the record id and delete the corresponding entry in the database
             db.delCat(acmi.id);
-            // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         } else {
@@ -219,7 +203,6 @@ public class Categories extends AppCompatActivity
 
     protected void onDestroy() {
         super.onDestroy();
-        // close connection
         db.close();
     }
 

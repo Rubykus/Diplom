@@ -2,7 +2,6 @@ package com.rubykus.hats;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,28 +16,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import static com.rubykus.hats.Good.db;
 import static com.rubykus.hats.Good.getNameCat;
 
 public class SingleGood extends AppCompatActivity {
 
     private static final int CM_CARD_ID = 1;
-
     public int varId;
     public String varName;
     public double varPrice;
     public String textImg;
     int varCount;
-
-    static SharedPreferences data;
-    SharedPreferences.Editor editor;
-
-    ArrayList<HashMap<String, String>> myArrList;
-    HashMap<String, String> map;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,18 +67,13 @@ public class SingleGood extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menu.add(0, CM_CARD_ID, 0, R.string.add_to_basket);
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == CM_CARD_ID) {
             final EditText count = new EditText(this);
             count.setInputType(InputType.TYPE_CLASS_NUMBER);

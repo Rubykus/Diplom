@@ -1,20 +1,15 @@
 package com.rubykus.hats;
 
-
-import android.annotation.TargetApi;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.GravityCompat;
@@ -24,27 +19,13 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Font;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
-
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 
@@ -57,13 +38,7 @@ public class Sale extends AppCompatActivity
     ListView lv;
     DB db;
     SimpleCursorAdapter scAdapter;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
-    private GoogleApiClient client;
 
-    @TargetApi(Build.VERSION_CODES.M)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,15 +56,12 @@ public class Sale extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // open a connection to the db
         db = new DB(this);
         db.open();
 
-        // forming matching columns
         String[] from = new String[]{DB.COLUMN_ID, DB.SALE_DATE, DB.SALE_LIST_GOOD, DB.SALE_SUM};
         int[] to = new int[]{R.id.textIDSale, R.id.textIDGood, R.id.textDate, R.id.textIDCheck};
 
-        // create adapter and customizable list
         scAdapter = new SimpleCursorAdapter(this, R.layout.item_sale, null, from, to, 0);
         lv = (ListView) findViewById(R.id.lv);
         ColorDrawable sage = new ColorDrawable(this.getResources().getColor(R.color.colorDivider));
@@ -97,14 +69,9 @@ public class Sale extends AppCompatActivity
         lv.setDividerHeight(50);
         lv.setAdapter(scAdapter);
 
-        // add context menu for list
         registerForContextMenu(lv);
 
-        // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -120,7 +87,6 @@ public class Sale extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.categories) {
@@ -149,7 +115,6 @@ public class Sale extends AppCompatActivity
         return true;
     }
 
-    // my cod
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -161,11 +126,7 @@ public class Sale extends AppCompatActivity
         AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                 .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
-            // obtain from the context menu item list data
-
-            // retrieve the record id and delete the corresponding entry in the database
             db.delSale(acmi.id);
-            // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         } else if (item.getItemId() == CM_CREATE_CHECK) {
@@ -189,7 +150,7 @@ public class Sale extends AppCompatActivity
                 writer.close();
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(Sale.this);
-                builder.setMessage("Открыть прайс-лист?")
+                builder.setMessage("Показать чек?")
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -210,7 +171,6 @@ public class Sale extends AppCompatActivity
 
     protected void onDestroy() {
         super.onDestroy();
-        // close connection
         db.close();
     }
 
@@ -226,46 +186,6 @@ public class Sale extends AppCompatActivity
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client.connect();
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Sale Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.rubykus.hats/http/host/path")
-        );
-        AppIndex.AppIndexApi.start(client, viewAction);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        Action viewAction = Action.newAction(
-                Action.TYPE_VIEW, // TODO: choose an action type.
-                "Sale Page", // TODO: Define a title for the content shown.
-                // TODO: If you have web page content that matches this app activity's content,
-                // make sure this auto-generated web page URL is correct.
-                // Otherwise, set the URL to null.
-                Uri.parse("http://host/path"),
-                // TODO: Make sure this auto-generated app URL is correct.
-                Uri.parse("android-app://com.rubykus.hats/http/host/path")
-        );
-        AppIndex.AppIndexApi.end(client, viewAction);
-        client.disconnect();
     }
 
     static class MyCursorLoader extends CursorLoader {

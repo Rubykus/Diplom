@@ -1,14 +1,10 @@
 package com.rubykus.hats;
 
-import android.app.Activity;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 public class AboutUs extends AppCompatActivity {
     @Override

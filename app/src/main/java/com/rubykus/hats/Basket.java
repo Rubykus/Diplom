@@ -29,15 +29,10 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.google.gson.Gson;
 import com.pkmmte.view.CircularImageView;
-
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 
 public class Basket extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LoaderManager.LoaderCallbacks<Cursor> {
@@ -45,11 +40,8 @@ public class Basket extends AppCompatActivity
     private static final int CM_DELETE_ID = 1;
 
     ListView lv;
-    ArrayList<HashMap<String, String>> myArrList;
     CursorAdapterForBasket adapter;
-    Gson gson = new Gson();
     DB db;
-
     Button clear;
 
     @Override
@@ -68,7 +60,6 @@ public class Basket extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // open a connection to the db
         db = new DB(this);
         db.open();
         Cursor cursor = db.getBasket();
@@ -77,19 +68,16 @@ public class Basket extends AppCompatActivity
         }else {
             getSupportActionBar().setTitle(R.string.basket);
         }
-        // forming matching columns
+
         String[] from = new String[] {};
         int[] to = new int[] {};
 
-        // create adapter and customizable list
         adapter = new CursorAdapterForBasket(this, R.layout.item_basket, null, from, to, 0);
         lv = (ListView) findViewById(R.id.lv);
         lv.setAdapter(adapter);
 
-        // add context menu for list
         registerForContextMenu(lv);
 
-        // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
 
         clear = (Button)findViewById(R.id.clearCard);
@@ -155,7 +143,6 @@ public class Basket extends AppCompatActivity
     }
     protected void onDestroy() {
         super.onDestroy();
-        // close connection
         db.close();
     }
     @Override
@@ -169,11 +156,7 @@ public class Basket extends AppCompatActivity
         final AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                 .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
-            // obtain from the context menu item list data
-
-            // retrieve the record id and delete the corresponding entry in the database
             db.delItemBasket(acmi.id);
-            // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         }
@@ -192,7 +175,6 @@ public class Basket extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.categories) {
@@ -221,7 +203,6 @@ public class Basket extends AppCompatActivity
         return true;
     }
 
-    // my cursor
     public class CursorAdapterForBasket extends SimpleCursorAdapter {
 
         private int layout;

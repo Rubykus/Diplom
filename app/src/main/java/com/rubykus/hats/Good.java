@@ -30,20 +30,16 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -61,7 +57,6 @@ public class Good extends AppCompatActivity
     GridView gv;
     static DB db;
     MyCursorAdapter scAdapter;
-    // for dialog cat
     int index_cat;
 
     @Override
@@ -81,23 +76,18 @@ public class Good extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        // open a connection to the db
         db = new DB(this);
         db.open();
 
-        // forming matching columns
         String[] from = new String[] {};
         int[] to = new int[] { R.id.nameGood, R.id.quantityGood, R.id.imageGood};
 
-        // create adapter and customizable list
         scAdapter = new MyCursorAdapter(this, R.layout.item_good, null, from, to, 0);
         gv = (GridView) findViewById(R.id.gridGoods);
         gv.setAdapter(scAdapter);
 
-        // add context menu for list
         registerForContextMenu(gv);
 
-        // create loader for reading data
         getSupportLoaderManager().initLoader(0, null, this);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,7 +100,6 @@ public class Good extends AppCompatActivity
 
     }
 
-    // initialize single good
     public void initGood(Cursor cursor){
         Intent intent = new Intent(this, SingleGood.class);
         intent.putExtra("id_good", cursor.getInt(cursor.getColumnIndex(DB.COLUMN_ID)));
@@ -136,14 +125,12 @@ public class Good extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menu.add(0, CM_ADD_ID,0, R.string.add);
         menu.add(0, CM_CAT_ID,0, R.string.categories);
         menu.add(0, CM_ALL_ID,0, R.string.all_good);
         menu.add(0, CM_PRICE_LIST_ID,0, "Прайс-лист");
         return true;
     }
-    // initialize dialog good list
     public void showDialogInner(final TextView tv, final int id){
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         Cursor cur = db.getAllCat();
@@ -177,7 +164,6 @@ public class Good extends AppCompatActivity
         AlertDialog dialog_choose = builder.create();
         dialog_choose.show();
     }
-    // get name good
     public static String getNameCat(int idCat){
         Cursor cur = db.getAllCat();
         int countRow = cur.getCount();
@@ -190,7 +176,6 @@ public class Good extends AppCompatActivity
         }
         return dataCat.get(idCat);
     }
-    // initialize dialog
     public void initDialog(Cursor cursor, final long id){
         View view = LayoutInflater.from(Good.this).inflate(R.layout.dialog_good, null);
         final EditText goodName = (EditText)view.findViewById(R.id.goodAddName);
@@ -298,12 +283,8 @@ public class Good extends AppCompatActivity
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == CM_ADD_ID) {
             initDialog(null, -1);
         } else if (id == CM_CAT_ID){
@@ -315,7 +296,6 @@ public class Good extends AppCompatActivity
         } else if (id == CM_PRICE_LIST_ID) {
             Cursor cursor = db.getAllGood();
             final String sFileName = "price-list.pdf";
-            String sBody = "Price list \n\n";
             int rowCount = cursor.getCount();
 
             PdfPTable table = new PdfPTable(3);
@@ -354,14 +334,12 @@ public class Good extends AppCompatActivity
 
                 PdfWriter.getInstance(doc, fOut);
 
-                //open the document
                 doc.open();
 
                 Paragraph p1 = new Paragraph("Price-list");
                 p1.setAlignment(Paragraph.ALIGN_CENTER);
                 p1.setSpacingAfter(10);
 
-                //add paragraph to document
                 doc.add(p1);
                 doc.add(table);
 
@@ -381,7 +359,6 @@ public class Good extends AppCompatActivity
                             File pdfFile = new File(Environment.getExternalStorageDirectory() + "/Price-list/" + sFileName);
                             Uri path = Uri.fromFile(pdfFile);
 
-                            // Setting the intent for pdf reader
                             Intent pdfIntent = new Intent(Intent.ACTION_VIEW);
                             pdfIntent.setDataAndType(path, "application/pdf");
                             pdfIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -396,34 +373,6 @@ public class Good extends AppCompatActivity
                     .setNegativeButton("Нет", null);
             builder.show();
 
-            /*try {
-                File root = new File(Environment.getExternalStorageDirectory(), "Price-list");
-                if (!root.exists()) {
-                    root.mkdirs();
-                }
-                final File gpxfile = new File(root, sFileName);
-                FileWriter writer = new FileWriter(gpxfile);
-                writer.write(sBody);
-                writer.flush();
-                writer.close();
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(Good.this);
-                builder.setMessage("Открыть прайс-лист?")
-                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                Intent i = new Intent();
-                                i.setAction(android.content.Intent.ACTION_VIEW);
-                                i.setDataAndType(Uri.fromFile(gpxfile), "text/plain");
-                                startActivity(i);
-                            }
-                        })
-                        .setNegativeButton("Нет", null);
-                builder.show();
-
-            } catch (IOException e) {
-                Toast.makeText(this, "Ошибка.", Toast.LENGTH_SHORT).show();
-            }*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -431,7 +380,6 @@ public class Good extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.categories) {
@@ -459,7 +407,6 @@ public class Good extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-    // my cod
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -471,10 +418,7 @@ public class Good extends AppCompatActivity
         AdapterView.AdapterContextMenuInfo acmi = (AdapterView.AdapterContextMenuInfo) item
                 .getMenuInfo();
         if (item.getItemId() == CM_DELETE_ID) {
-            // obtain from the context menu item list data
-            // retrieve the record id and delete the corresponding entry in the database
             db.delGood(acmi.id);
-            // obtain new cursor with data
             getSupportLoaderManager().getLoader(0).forceLoad();
             return true;
         } else {
@@ -486,7 +430,6 @@ public class Good extends AppCompatActivity
 
     protected void onDestroy() {
         super.onDestroy();
-        // close connection
         db.close();
     }
 
