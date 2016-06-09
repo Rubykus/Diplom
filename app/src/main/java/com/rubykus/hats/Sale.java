@@ -118,7 +118,7 @@ public class Sale extends AppCompatActivity
     public void onCreateContextMenu(ContextMenu menu, View v,
                                     ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CM_CREATE_CHECK, 0, R.string.create_check);
+        menu.add(0, CM_CREATE_CHECK, 0, R.string.show_check);
         menu.add(0, CM_DELETE_ID, 0, R.string.delete);
     }
 
